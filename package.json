@@ -2,7 +2,7 @@
   "name": "antigravity-context-monitor",
   "displayName": "Antigravity Context Window Monitor",
   "description": "Real-time context window usage monitor for Antigravity ( Antigravity )",
-  "version": "1.16.15",
+  "version": "1.16.16",
   "publisher": "AGI-is-going-to-arrive",
   "license": "MIT",
   "repository": {
@@ -41,6 +41,10 @@
       {
         "command": "antigravity-context-monitor.showActivityPanel",
         "title": "Show Model Activity"
+      },
+      {
+        "command": "antigravity-context-monitor.checkForUpdates",
+        "title": "Check for Updates"
       }
     ],
     "configuration": {

@@ -113,9 +113,10 @@ A plugin built for **Antigravity** (Google's Windsurf-based IDE) that provides r
    * **Manual**: Install the `.vsix` file via Extensions → Install from VSIX.
 2. **Status Bar**: The bottom-right status bar shows current context usage (empty chats use the current/default model threshold).
 3. **Hover**: Hover over the status bar item for detailed info (model, input/output tokens, remaining capacity, compression status, image gen steps, per-model quota summary, and the latest checkpoint shadow model when present).
+4. **Updates**: The extension checks GitHub releases silently at startup, and you can run `Check for Updates` manually; it downloads and installs an update only after you select `Install Update`.
 
 
-4. **Click — WebView Monitor Panel**: Click the status bar item to open a comprehensive **9-tab monitoring dashboard**:
+5. **Click — WebView Monitor Panel**: Click the status bar item to open a comprehensive **9-tab monitoring dashboard**:
 
    **Monitor** — Quota overview, GM snapshot, cost snapshot, active session details with output breakdown and LLM call details.
 

@@ -38,6 +38,7 @@ import type { AccountSnapshot } from './activity-panel';
 import { isBillingDay, isBillingDaySetting } from './billing-day';
 import { expandModelIdsToPool } from './pool-utils';
 import { DailyLedger, toLocalDateKey, type DailyLedgerState } from './daily-ledger';
+import { checkForUpdates } from './updater';
 
 // ─── Extension State ──────────────────────────────────────────────────────────
 // Each VS Code window runs its own extension instance, so module-level
@@ -1254,6 +1255,9 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand('antigravity-context-monitor.showActivityPanel', () => {
             showMonitorPanel(makePanelPayload({ context, initialTab: 'gmdata' }));
         }),
+        vscode.commands.registerCommand('antigravity-context-monitor.checkForUpdates', () => {
+            return checkForUpdates(context, 'manual');
+        }),
         vscode.commands.registerCommand('antigravity-context-monitor.clearToolCatalog', () => {
             // Update the module-level lastGMSummary with the patched summary (empty catalog)
             // so makePanelPayload() doesn't serve stale data with the old catalog.
@@ -1266,6 +1270,8 @@ export function activate(context: vscode.ExtensionContext): void {
         statusBar,
         outputChannel
     );
+
+    void checkForUpdates(context, 'startup');
 
     // Start polling
     const config = vscode.workspace.getConfiguration('antigravityContextMonitor');
