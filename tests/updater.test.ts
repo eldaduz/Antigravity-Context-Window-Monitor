@@ -16,6 +16,33 @@ describe('updater', () => {
         ], 'antigravity-context-monitor-*.vsix')?.version).toBe('1.16.16');
     });
 
+    it('matches a plain VSIX asset from a suffixed release tag', () => {
+        expect(findReleaseMatch([
+            {
+                tag_name: 'v1.16.16-english-only',
+                assets: [{ name: 'antigravity-context-monitor-1.16.16.vsix' }],
+            },
+        ], 'antigravity-context-monitor-*.vsix')?.version).toBe('1.16.16');
+    });
+
+    it('chooses the highest stable release with a matching VSIX', () => {
+        expect(findReleaseMatch([
+            {
+                tag_name: 'v1.17.0-beta',
+                prerelease: true,
+                assets: [{ name: 'antigravity-context-monitor-1.17.0.vsix' }],
+            },
+            {
+                tag_name: 'v1.16.16',
+                assets: [{ name: 'antigravity-context-monitor-1.16.16.vsix' }],
+            },
+            {
+                tag_name: 'v1.16.17-english-only',
+                assets: [{ name: 'antigravity-context-monitor-1.16.17.vsix' }],
+            },
+        ], 'antigravity-context-monitor-*.vsix')?.version).toBe('1.16.17');
+    });
+
     it('rejects VSIX assets for another version', () => {
         expect(findReleaseMatch([
             {
@@ -49,6 +76,9 @@ describe('updater', () => {
             'Install Update',
         );
         expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock.mock.calls[0]?.[1]).toEqual(expect.objectContaining({
+            signal: expect.any(AbortSignal),
+        }));
         expect(install).not.toHaveBeenCalled();
         vi.unstubAllGlobals();
         vi.restoreAllMocks();

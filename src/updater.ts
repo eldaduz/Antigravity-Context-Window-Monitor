@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 
 const RELEASES_URL = 'https://api.github.com/repos/eldaduz/Antigravity-Context-Window-Monitor/releases?per_page=20';
 const ASSET_PATTERN = 'antigravity-context-monitor-*.vsix';
+const REQUEST_TIMEOUT_MS = 10_000;
 
 export interface ReleaseAsset {
     name: string;
@@ -11,6 +12,7 @@ export interface ReleaseAsset {
 export interface Release {
     tag_name: string;
     assets: ReleaseAsset[];
+    prerelease?: boolean;
 }
 
 function versionParts(version: string): number[] {
@@ -28,20 +30,28 @@ export function compareVersions(remote: string, current: string): number {
     return 0;
 }
 
+function releaseVersion(tag: string): string | null {
+    return /^v?(\d+\.\d+\.\d+)(?:-|$)/i.exec(tag)?.[1] ?? null;
+}
+
 export function findReleaseMatch(releases: Release[], assetPattern: string): { version: string; asset: ReleaseAsset } | null {
+    let match: { version: string; asset: ReleaseAsset } | null = null;
     for (const release of releases) {
-        const version = release.tag_name.replace(/^v/i, '');
+        if (release.prerelease) continue;
+        const version = releaseVersion(release.tag_name);
+        if (!version) continue;
         const expectedName = assetPattern.replace('*', version).toLowerCase();
         const asset = release.assets.find(candidate => candidate.name.toLowerCase() === expectedName);
-        if (asset) return { version, asset };
+        if (asset && (!match || compareVersions(version, match.version) > 0)) match = { version, asset };
     }
-    return null;
+    return match;
 }
 
 export async function checkForUpdates(context: vscode.ExtensionContext, trigger: 'startup' | 'manual'): Promise<boolean> {
     try {
         const response = await fetch(RELEASES_URL, {
             headers: { Accept: 'application/vnd.github+json' },
+            signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
         });
         if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
 
@@ -58,7 +68,9 @@ export async function checkForUpdates(context: vscode.ExtensionContext, trigger:
         if (install !== 'Install Update') return false;
         if (!match.asset.browser_download_url) throw new Error('Release asset download URL is missing.');
 
-        const assetResponse = await fetch(match.asset.browser_download_url);
+        const assetResponse = await fetch(match.asset.browser_download_url, {
+            signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        });
         if (!assetResponse.ok) throw new Error(`VSIX download returned ${assetResponse.status}`);
         await vscode.workspace.fs.createDirectory(context.globalStorageUri);
         const destination = vscode.Uri.joinPath(context.globalStorageUri, match.asset.name);
