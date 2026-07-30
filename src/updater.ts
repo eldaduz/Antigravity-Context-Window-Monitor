@@ -51,6 +51,11 @@ export async function checkForUpdates(context: vscode.ExtensionContext, trigger:
             if (trigger === 'manual') await vscode.window.showInformationMessage('Antigravity Context Window Monitor is up to date.');
             return false;
         }
+        const install = await vscode.window.showInformationMessage(
+            `Antigravity Context Window Monitor ${match.version} is available.`,
+            'Install Update',
+        );
+        if (install !== 'Install Update') return false;
         if (!match.asset.browser_download_url) throw new Error('Release asset download URL is missing.');
 
         const assetResponse = await fetch(match.asset.browser_download_url);
