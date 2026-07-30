@@ -44,7 +44,7 @@
       },
       {
         "command": "antigravity-context-monitor.checkForUpdates",
-        "title": "Check for Updates"
+        "title": "AGY Context WM Check for Updates"
       }
     ],
     "configuration": {
