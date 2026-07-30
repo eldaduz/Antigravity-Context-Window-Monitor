@@ -325,7 +325,7 @@ function buildFullLoadNormalLines(opts?: {
         quotaTitle,
         ``,
         header,
-        `|:--|--:|--:|`,
+        `|:--|:-:|:--|`,
         ...rows.map((r, i) => {
             const bar = i === 0 ? '🟢' : i < 3 ? '🟡' : '🔴';
             return `| ${bar} ${r.label} | ${Math.round(r.quotaInfo.remainingFraction * 100)}% | 🔄 2h |`;
@@ -421,7 +421,7 @@ describe('W3: protected quota table under line budget', () => {
             `⚡ Model Quota  (Showing ${rows.length}/10)`,
             ``,
             `| Model | % | Reset |`,
-            `|:--|--:|--:|`,
+            `|:--|:-:|:--|`,
             ...rows.map(r => `| 🟢 ${r.label} | ${Math.round(r.quotaInfo.remainingFraction * 100)}% | 🔄 1h |`),
             ``,
             `… and ${hiddenCount} more models — click to view all`,
@@ -442,7 +442,7 @@ describe('W3: protected quota table under line budget', () => {
             '⚡ Model Quota',
             '',
             '| Model | % | Reset |',
-            '|:--|--:|--:|',
+            '|:--|:-:|:--|',
             '| 🟢 A | 10% | 🔄 1h |',
             '',
             '… and 3 more models — click to view all',

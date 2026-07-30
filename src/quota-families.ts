@@ -42,5 +42,5 @@ export function formatQuotaIndicators(configs: Pick<ModelConfig, 'label' | 'quot
 }
 
 export function getResetHorizon(resetTime: string, now = Date.now()): string {
-    return new Date(resetTime).getTime() - now < 24 * 60 * 60 * 1000 ? 'Five-hour limit' : 'Weekly limit';
+    return new Date(resetTime).getTime() - now < 24 * 60 * 60 * 1000 ? '5-hour limit' : 'Weekly limit';
 }

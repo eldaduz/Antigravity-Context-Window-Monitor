@@ -723,7 +723,7 @@ export class StatusBarManager {
 
         const now = Date.now();
         const header = `| ${tBi('Model', '')} | % | ${tBi('Reset', '')} |`;
-        const sep = '|:--|--:|--:|';
+        const sep = '|:--|:-:|:--|';
         const tableRows: string[] = [];
         for (const c of rows) {
             const qi = c.quotaInfo!;

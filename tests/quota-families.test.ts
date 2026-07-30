@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { collapseModelQuotas, formatQuotaIndicators } from '../src/quota-families';
+import { collapseModelQuotas, formatQuotaIndicators, getResetHorizon } from '../src/quota-families';
 
 describe('collapseModelQuotas', () => {
     it('shows only shared family quotas from GetUserStatus data', () => {
@@ -25,5 +25,10 @@ describe('collapseModelQuotas', () => {
         expect(formatQuotaIndicators([
             { label: 'Gemini 3.6 Flash', quotaInfo: { remainingFraction: 0.3, resetTime: '2026-07-30T14:00:00Z' } },
         ])).toBe('Gemini 🔴30%');
+    });
+
+    it('labels resets under a day as 5-hour limits', () => {
+        expect(getResetHorizon('2026-07-30T14:00:00Z', Date.parse('2026-07-30T13:00:00Z')))
+            .toBe('5-hour limit');
     });
 });
