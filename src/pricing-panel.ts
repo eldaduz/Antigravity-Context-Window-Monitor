@@ -30,7 +30,7 @@ export function buildPricingTabContent(
     const mergedTable = store.getMerged();
     let activeGrandTotal = 0;
 
-    // 优先从 100% 精确的今日活跃账本中提取模型明细与计算
+    //  100%
     if (todayLedgerActive && todayLedgerActive.length > 0) {
         for (const bucket of todayLedgerActive) {
             for (const [modelKey, ms] of Object.entries(bucket.modelStats)) {
@@ -39,7 +39,7 @@ export function buildPricingTabContent(
                 const baseName = getModelBaseName(modelKey) || displayName;
                 const pricing = findPricing(modelKey, mergedTable);
 
-                // 结合定价算出输入、输出、缓存、思考费用以适配用户对价格的修改
+                // 、、、
                 const inputCost = pricing ? (ms.inputTokens / 1_000_000) * pricing.input : ms.estimatedCost;
                 const outputCost = pricing ? ((ms.outputTokens - ms.thinkingTokens) / 1_000_000) * pricing.output : 0;
                 const cacheCost = pricing ? (ms.cacheReadTokens / 1_000_000) * pricing.cacheRead : 0;
@@ -73,7 +73,7 @@ export function buildPricingTabContent(
             }
         }
     } else {
-        // 没有任何今日活跃账本（极罕见），降级使用活跃 Summary 的统计
+        // （）， Summary
         const costResult = summary ? store.calculateCosts(summary) : { rows: [] as ModelCostRow[], grandTotal: 0 };
         activeGrandTotal = costResult.grandTotal;
         for (const r of costResult.rows) {
@@ -81,7 +81,7 @@ export function buildPricingTabContent(
         }
     }
 
-    // 归并已结算账本中的模型明细数据
+    //
     if (ledgerSettled && ledgerSettled.length > 0) {
         for (const entry of ledgerSettled) {
             if (entry.totalCalls <= 0) { continue; }
@@ -96,7 +96,7 @@ export function buildPricingTabContent(
                 const baseName = getModelBaseName(modelKey) || displayName;
                 const pricing = findPricing(modelKey, mergedTable);
 
-                // 根据 token 数与单价粗略算下输入/输出/缓存的占比，支持 SVG 色条中漂亮的四色渲染
+                //  token //， SVG
                 const inputCost = pricing ? (inputTokens / 1_000_000) * pricing.input : totalCost;
                 const outputCost = pricing ? (outputTokens / 1_000_000) * pricing.output : 0;
                 const cacheCost = pricing ? (cacheTokens / 1_000_000) * pricing.cacheRead : 0;
@@ -131,7 +131,7 @@ export function buildPricingTabContent(
         parts.push(buildMonthlyCostSummary(monthBreakdown, activeGrandTotal, rows, pendingArchiveCost));
     }
 
-    // 收集所有被调用的 responseModel，用于高亮自定义价格表格
+    //  responseModel，
     const calledModelKeys = new Set<string>();
     for (const r of rows) {
         if (r.totalCost > 0 || r.inputTokens > 0) {
@@ -151,7 +151,7 @@ export function buildPricingTabContent(
         parts.push(
             `<p class="empty-msg">${tBi(
                 'Cost analysis will appear after GM data is available. You can configure custom prices below.',
-                '费用分析将在 GM 数据可用后显示。您可以在下方配置自定义价格。',
+                ' GM 。。',
             )}</p>`,
             buildDefaultPricingTable(store.getMerged(), store.getCustom()),
         );
@@ -999,19 +999,19 @@ function buildCostPanel(
         + (ledgerSettled ? ledgerSettled.reduce((s, e) => s + (e.totalCalls || 0), 0) : 0);
     const avgPerCall = totalCalls > 0 ? grandTotal / totalCalls : 0;
 
-    let html = `<h2 class="act-section-title">${tBi('Cost Analysis', '费用分析')}</h2>`;
+    let html = `<h2 class="act-section-title">${tBi('Cost Analysis', '')}</h2>`;
     html += '<div class="cost-panel">';
 
     // ── Summary chips (inline, compact) ──
     html += '<div class="cost-chips">';
     html += `<span class="cost-chip cost-chip-total">${fmtUsd(grandTotal)}</span>`;
     if (topModel) {
-        html += `<span class="cost-chip" data-tooltip="${tBi('Top Spender', '最高消费')}">${esc(topModel.name)} ${fmtUsd(topModel.totalCost)}</span>`;
+        html += `<span class="cost-chip" data-tooltip="${tBi('Top Spender', '')}">${esc(topModel.name)} ${fmtUsd(topModel.totalCost)}</span>`;
     }
-    html += `<span class="cost-chip" data-tooltip="${tBi('Avg per Call', '平均每次')}">${fmtUsd(avgPerCall)}/${tBi('call', '次')}</span>`;
-    html += `<span class="cost-chip" data-tooltip="${tBi('Models with pricing', '有定价的模型')}">${priced.length} ${tBi('models', '模型')}</span>`;
+    html += `<span class="cost-chip" data-tooltip="${tBi('Avg per Call', '')}">${fmtUsd(avgPerCall)}/${tBi('call', '')}</span>`;
+    html += `<span class="cost-chip" data-tooltip="${tBi('Models with pricing', '')}">${priced.length} ${tBi('models', '')}</span>`;
     if (totalCalls > 0) {
-        html += `<span class="cost-chip">${totalCalls} ${tBi('calls', '调用')}</span>`;
+        html += `<span class="cost-chip">${totalCalls} ${tBi('calls', '')}</span>`;
     }
     html += '</div>';
 
@@ -1020,7 +1020,7 @@ function buildCostPanel(
     const detailSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
     if (priced.length > 0) {
         html += `<div class="cost-bar-section">`;
-        html += `<div class="cost-sub-header">${chartSvg}${tBi('Cost Distribution', '费用分布')}</div>`;
+        html += `<div class="cost-sub-header">${chartSvg}${tBi('Cost Distribution', '')}</div>`;
         const maxCost = priced[0].totalCost;
         for (const r of priced) {
             const pct = maxCost > 0 ? (r.totalCost / maxCost) * 100 : 0;
@@ -1033,10 +1033,10 @@ function buildCostPanel(
             html += `<div class="cost-bar-row">
                 <span class="cost-bar-label" data-tooltip="${esc(r.responseModel)}">${esc(r.name)}</span>
                 <div class="cost-bar-track">
-                    ${inputPct > 0 ? `<div class="cost-bar-seg cost-seg-input" style="width:${inputPct.toFixed(1)}%" data-tooltip="${tBi('Input', '输入')}: ${fmtUsd(r.inputCost)} (${fmtTok(r.inputTokens)} tok)"></div>` : ''}
-                    ${outputPct > 0 ? `<div class="cost-bar-seg cost-seg-output" style="width:${outputPct.toFixed(1)}%" data-tooltip="${tBi('Output', '输出')}: ${fmtUsd(r.outputCost)} (${fmtTok(r.outputTokens)} tok)"></div>` : ''}
-                    ${cachePct > 0 ? `<div class="cost-bar-seg cost-seg-cache" style="width:${cachePct.toFixed(1)}%" data-tooltip="${tBi('Cache', '缓存')}: ${fmtUsd(r.cacheCost)} (${fmtTok(r.cacheTokens)} tok)"></div>` : ''}
-                    ${thinkPct > 0 ? `<div class="cost-bar-seg cost-seg-think" style="width:${thinkPct.toFixed(1)}%" data-tooltip="${tBi('Thinking', '思考')}: ${fmtUsd(r.thinkingCost)} (${fmtTok(r.thinkingTokens)} tok)"></div>` : ''}
+                    ${inputPct > 0 ? `<div class="cost-bar-seg cost-seg-input" style="width:${inputPct.toFixed(1)}%" data-tooltip="${tBi('Input', '')}: ${fmtUsd(r.inputCost)} (${fmtTok(r.inputTokens)} tok)"></div>` : ''}
+                    ${outputPct > 0 ? `<div class="cost-bar-seg cost-seg-output" style="width:${outputPct.toFixed(1)}%" data-tooltip="${tBi('Output', '')}: ${fmtUsd(r.outputCost)} (${fmtTok(r.outputTokens)} tok)"></div>` : ''}
+                    ${cachePct > 0 ? `<div class="cost-bar-seg cost-seg-cache" style="width:${cachePct.toFixed(1)}%" data-tooltip="${tBi('Cache', '')}: ${fmtUsd(r.cacheCost)} (${fmtTok(r.cacheTokens)} tok)"></div>` : ''}
+                    ${thinkPct > 0 ? `<div class="cost-bar-seg cost-seg-think" style="width:${thinkPct.toFixed(1)}%" data-tooltip="${tBi('Thinking', '')}: ${fmtUsd(r.thinkingCost)} (${fmtTok(r.thinkingTokens)} tok)"></div>` : ''}
                 </div>
                 <span class="cost-bar-val">${fmtUsd(r.totalCost)}</span>
             </div>`;
@@ -1044,10 +1044,10 @@ function buildCostPanel(
 
         // Legend
         html += `<div class="cost-legend">
-            <span class="cost-legend-item"><span class="cost-legend-dot" style="background:#60a5fa"></span>${tBi('Input', '输入')}</span>
-            <span class="cost-legend-item"><span class="cost-legend-dot" style="background:#2dd4bf"></span>${tBi('Output', '输出')}</span>
-            <span class="cost-legend-item"><span class="cost-legend-dot" style="background:#22d3ee"></span>${tBi('Cache', '缓存')}</span>
-            <span class="cost-legend-item"><span class="cost-legend-dot" style="background:#fb923c"></span>${tBi('Thinking', '思考')}</span>
+            <span class="cost-legend-item"><span class="cost-legend-dot" style="background:#60a5fa"></span>${tBi('Input', '')}</span>
+            <span class="cost-legend-item"><span class="cost-legend-dot" style="background:#2dd4bf"></span>${tBi('Output', '')}</span>
+            <span class="cost-legend-item"><span class="cost-legend-dot" style="background:#22d3ee"></span>${tBi('Cache', '')}</span>
+            <span class="cost-legend-item"><span class="cost-legend-dot" style="background:#fb923c"></span>${tBi('Thinking', '')}</span>
         </div>`;
         html += `</div>`; // cost-bar-section
     }
@@ -1055,7 +1055,7 @@ function buildCostPanel(
     // ── Per-model cost breakdown ──
     if (priced.length > 0) {
         html += `<div class="cost-detail-section">`;
-        html += `<div class="cost-sub-header">${detailSvg}${tBi('Cost Breakdown', '费用明细')}</div>`;
+        html += `<div class="cost-sub-header">${detailSvg}${tBi('Cost Breakdown', '')}</div>`;
         html += '<div class="cost-detail-rows">';
         for (const r of priced) {
             html += `<div class="cost-detail-row">
@@ -1085,14 +1085,14 @@ function buildCostPanel(
     if (unpriced.length > 0) {
         html += `<p class="cost-note">${unpriced.length} ${tBi(
             'model(s) have no pricing data',
-            '个模型暂无价格数据',
+            '',
         )}: ${unpriced.map(r => esc(r.name)).join(', ')}</p>`;
     }
 
     const infoSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
     html += `<div class="prc-info-bar prc-info-warn">${infoSvg}<span class="prc-info-bar-body">${tBi(
         'Costs are estimates based on the pricing table below. Actual billing may differ.',
-        '费用基于下方价格表估算，实际计费可能不同。',
+        '，。',
     )}</span></div>`;
 
     html += '</div>';
@@ -1172,7 +1172,7 @@ export function buildModelDNACards(
     };
     const fmt = (n: number) => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
 
-    let html = `<h2 class="act-section-title">${tBi('Model Info', '模型信息')}</h2>`;
+    let html = `<h2 class="act-section-title">${tBi('Model Info', '')}</h2>`;
     html += `<div class="dna-row-list">`;
 
     for (const entry of deduped) {
@@ -1196,7 +1196,7 @@ export function buildModelDNACards(
 
         // ── Card header: model name + provider tag + badges ──
         const headerBadge = isPersistedOnly
-            ? ` <span class="act-badge" style="opacity:0.7">${tBi('cached', '已缓存')}</span>`
+            ? ` <span class="act-badge" style="opacity:0.7">${tBi('cached', '')}</span>`
             : '';
 
         // Only show responseModel if it's truly unknown (not in alias map).
@@ -1222,18 +1222,18 @@ export function buildModelDNACards(
 
         // ── Left: compact stats ──
         html += `<div class="dna-row-stats">`;
-        html += `<div class="act-card-row"><span>${ICONS.bolt} <span>${tBi('Calls', '调用')}</span></span><span class="val">${fmt(callCount)}</span></div>`;
-        html += `<div class="act-card-row"><span>${ICONS.bar} <span>${tBi('Steps', '步骤')}</span></span><span class="val">${fmt(stepsCovered)}</span></div>`;
+        html += `<div class="act-card-row"><span>${ICONS.bolt} <span>${tBi('Calls', '')}</span></span><span class="val">${fmt(callCount)}</span></div>`;
+        html += `<div class="act-card-row"><span>${ICONS.bar} <span>${tBi('Steps', '')}</span></span><span class="val">${fmt(stepsCovered)}</span></div>`;
         if (totalCredits > 0) {
-            html += `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Credits', '积分')}</span></span><span class="val">${totalCredits.toFixed(1)}</span></div>`;
+            html += `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Credits', '')}</span></span><span class="val">${totalCredits.toFixed(1)}</span></div>`;
         }
         if (totalRetries > 0) {
             html += `<div class="act-card-divider"></div>`;
-            html += `<div class="act-card-row"><span>${ICONS.retry} <span>${tBi('Retries', '重试')}</span></span><span class="val">${totalRetries}</span></div>`;
+            html += `<div class="act-card-row"><span>${ICONS.retry} <span>${tBi('Retries', '')}</span></span><span class="val">${totalRetries}</span></div>`;
         }
         if (errorCount > 0) {
             if (totalRetries <= 0) { html += `<div class="act-card-divider"></div>`; }
-            html += `<div class="act-card-row"><span>${ICONS.error} <span>${tBi('Errors', '错误')}</span></span><span class="val" style="color:#ef4444">${errorCount}</span></div>`;
+            html += `<div class="act-card-row"><span>${ICONS.error} <span>${tBi('Errors', '')}</span></span><span class="val" style="color:#ef4444">${errorCount}</span></div>`;
         }
         html += `</div>`; // dna-row-stats
 
@@ -1242,7 +1242,7 @@ export function buildModelDNACards(
         if (supportedMimeTypes.length > 0) {
             html += `
                 <details class="collapsible inline-details" id="d-model-mime-${entryId}">
-                    <summary>${tBi('MIME Types', 'MIME 类型')} (${supportedMimeTypes.length})</summary>
+                    <summary>${tBi('MIME Types', 'MIME ')} (${supportedMimeTypes.length})</summary>
                     <div class="details-body">
                         <div class="mime-tags-wrap">
                             ${supportedMimeTypes.map(mime => `<span class="mime-tag">${esc(mime)}</span>`).join('')}
@@ -1253,21 +1253,21 @@ export function buildModelDNACards(
         if (cc) {
             html += `
                 <details class="collapsible inline-details" id="d-model-tech-${entryId}">
-                    <summary>${tBi('Technical Params', '技术参数')}</summary>
+                    <summary>${tBi('Technical Params', '')}</summary>
                     <div class="details-body">
                         <div class="prc-dna-grid-inner">
                             ${buildDNAField('maxTokens', String(cc.maxTokens))}
-                            ${buildDNAField(tBi('temp', '温度'), cc.temperature.toString())}
-                            ${buildDNAField(tBi('firstTemp', '初始温度'), cc.firstTemperature.toString())}
+                            ${buildDNAField(tBi('temp', ''), cc.temperature.toString())}
+                            ${buildDNAField(tBi('firstTemp', ''), cc.firstTemperature.toString())}
                             ${buildDNAField('topK', String(cc.topK))}
                             ${buildDNAField('topP', cc.topP.toString())}
-                            ${buildDNAField(tBi('stops', '停止词'), String(cc.stopPatternCount))}
+                            ${buildDNAField(tBi('stops', ''), String(cc.stopPatternCount))}
                         </div>
                     </div>
                 </details>`;
         }
         if (supportedMimeTypes.length === 0 && !cc) {
-            html += `<span style="font-size:0.8em;color:var(--color-text-dim);opacity:0.5">${tBi('No additional info', '暂无更多信息')}</span>`;
+            html += `<span style="font-size:0.8em;color:var(--color-text-dim);opacity:0.5">${tBi('No additional info', '')}</span>`;
         }
         html += `</div>`; // dna-row-details
 
@@ -1291,11 +1291,11 @@ function toDomSafeId(value: string): string {
 
 
 const FIELD_LABELS: Record<string, [string, string]> = {
-    input: ['Input', '输入'],
-    output: ['Output', '输出'],
-    cacheRead: ['Cache Read', '缓存读取'],
-    cacheWrite: ['Cache Write', '缓存写入'],
-    thinking: ['Thinking', '思考'],
+    input: ['Input', ''],
+    output: ['Output', ''],
+    cacheRead: ['Cache Read', ''],
+    cacheWrite: ['Cache Write', ''],
+    thinking: ['Thinking', ''],
 };
 
 function isDefaultPricingCovered(responseModel: string, defaultKey: string): boolean {
@@ -1356,7 +1356,7 @@ function buildEditablePricingTable(
 
     const fields: (keyof ModelPricing)[] = ['input', 'output', 'cacheRead', 'thinking'];
 
-    let html = `<h2 class="act-section-title">${tBi('Custom Pricing', '自定义价格')} <span style="font-size:0.82em;color:var(--color-text-dim)">(${tBi('USD / 1M tokens', 'USD / 100万令牌')})</span></h2>`;
+    let html = `<h2 class="act-section-title">${tBi('Custom Pricing', '')} <span style="font-size:0.82em;color:var(--color-text-dim)">(${tBi('USD / 1M tokens', 'USD / 100')})</span></h2>`;
     html += `<div class="prc-edit-section">`;
     html += `<div class="prc-edit-list">`;
 
@@ -1367,7 +1367,7 @@ function buildEditablePricingTable(
         const uncalledClass = entry.isCalled ? '' : ' prc-edit-uncalled';
 
         html += `<div class="prc-edit-row${uncalledClass}">`;
-        html += `<div class="prc-edit-row-left"><span class="prc-edit-card-name" data-tooltip="${esc(entry.responseModel)}">${esc(entry.name)}${isCustom ? `<span class="prc-custom-badge">${tBi('CUSTOM', '自定义')}</span>` : ''}</span></div>`;
+        html += `<div class="prc-edit-row-left"><span class="prc-edit-card-name" data-tooltip="${esc(entry.responseModel)}">${esc(entry.name)}${isCustom ? `<span class="prc-custom-badge">${tBi('CUSTOM', '')}</span>` : ''}</span></div>`;
         html += `<div class="prc-edit-row-right">`;
         for (const f of fields) {
             const [en, zh] = FIELD_LABELS[f] || [f, f];
@@ -1382,15 +1382,15 @@ function buildEditablePricingTable(
 
     html += `</div>`;
     html += `<div class="prc-edit-actions">
-        <button class="prc-btn prc-btn-primary" id="pricingSaveBtn">${tBi('Save Prices', '保存价格')}</button>
-        <button class="prc-btn" id="pricingResetBtn">${tBi('Reset to Default', '恢复默认')}</button>
+        <button class="prc-btn prc-btn-primary" id="pricingSaveBtn">${tBi('Save Prices', '')}</button>
+        <button class="prc-btn" id="pricingResetBtn">${tBi('Reset to Default', '')}</button>
         <span class="prc-feedback" id="pricingFeedback"></span>
     </div>`;
     const infoSvg2 = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
     html += `<div class="prc-info-bar">${infoSvg2}<div class="prc-info-bar-body"><ul>
-        <li>${tBi('Edit prices above and click <b>Save</b>. Changes persist across sessions.', '编辑上方价格后点击<b>保存</b>，修改跨会话持久化。')}</li>
-        <li>${tBi('<b>Reset</b> restores built-in default prices.', '<b>恢复默认</b>将还原内置价格。')}</li>
-        <li>${tBi('Default prices last updated:', '默认价格最后更新：')} <span class="prc-info-date">${PRICING_LAST_UPDATED}</span></li>
+        <li>${tBi('Edit prices above and click <b>Save</b>. Changes persist across sessions.', '<b></b>，。')}</li>
+        <li>${tBi('<b>Reset</b> restores built-in default prices.', '<b></b>。')}</li>
+        <li>${tBi('Default prices last updated:', '：')} <span class="prc-info-date">${PRICING_LAST_UPDATED}</span></li>
     </ul></div></div>`;
     html += `</div>`;
     return html;
@@ -1406,7 +1406,7 @@ function buildDefaultPricingTable(
 
     const fields: (keyof ModelPricing)[] = ['input', 'output', 'cacheRead', 'thinking'];
 
-    let html = `<h2 class="act-section-title">${tBi('Custom Pricing', '自定义价格')} <span style="font-size:0.82em;color:var(--color-text-dim)">(${tBi('USD / 1M tokens', 'USD / 100万令牌')})</span></h2>`;
+    let html = `<h2 class="act-section-title">${tBi('Custom Pricing', '')} <span style="font-size:0.82em;color:var(--color-text-dim)">(${tBi('USD / 1M tokens', 'USD / 100')})</span></h2>`;
     html += `<div class="prc-edit-section"><div class="prc-edit-list">`;
 
     for (const [model, p] of entries) {
@@ -1414,7 +1414,7 @@ function buildDefaultPricingTable(
         const displayName = model.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
         html += `<div class="prc-edit-row">`;
-        html += `<div class="prc-edit-row-left"><span class="prc-edit-card-name" data-tooltip="${esc(model)}">${esc(displayName)}${isCustom ? `<span class="prc-custom-badge">${tBi('CUSTOM', '自定义')}</span>` : ''}</span></div>`;
+        html += `<div class="prc-edit-row-left"><span class="prc-edit-card-name" data-tooltip="${esc(model)}">${esc(displayName)}${isCustom ? `<span class="prc-custom-badge">${tBi('CUSTOM', '')}</span>` : ''}</span></div>`;
         html += `<div class="prc-edit-row-right">`;
         for (const f of fields) {
             const [en, zh] = FIELD_LABELS[f] || [f, f];
@@ -1428,11 +1428,11 @@ function buildDefaultPricingTable(
     }
 
     html += `</div>`;
-    html += `<div class="prc-edit-actions"><button class="prc-btn prc-btn-primary" id="pricingSaveBtn">${tBi('Save Prices', '保存价格')}</button><button class="prc-btn" id="pricingResetBtn">${tBi('Reset to Default', '恢复默认')}</button><span class="prc-feedback" id="pricingFeedback"></span></div>`;
+    html += `<div class="prc-edit-actions"><button class="prc-btn prc-btn-primary" id="pricingSaveBtn">${tBi('Save Prices', '')}</button><button class="prc-btn" id="pricingResetBtn">${tBi('Reset to Default', '')}</button><span class="prc-feedback" id="pricingFeedback"></span></div>`;
     const infoSvg3 = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
     html += `<div class="prc-info-bar">${infoSvg3}<div class="prc-info-bar-body"><ul>
-        <li>${tBi('Edit prices above and click <b>Save</b>. Changes persist across sessions.', '编辑上方价格后点击<b>保存</b>，修改跨会话持久化。')}</li>
-        <li>${tBi('Default prices last updated:', '默认价格最后更新：')} <span class="prc-info-date">${PRICING_LAST_UPDATED}</span></li>
+        <li>${tBi('Edit prices above and click <b>Save</b>. Changes persist across sessions.', '<b></b>，。')}</li>
+        <li>${tBi('Default prices last updated:', '：')} <span class="prc-info-date">${PRICING_LAST_UPDATED}</span></li>
     </ul></div></div></div>`;
     return html;
 }
@@ -1440,7 +1440,7 @@ function buildDefaultPricingTable(
 // ─── Monthly Cost Summary Builder ────────────────────────────────────────────
 
 const MONTH_NAMES_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const MONTH_NAMES_ZH = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+const MONTH_NAMES_ZH = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 
 const CALENDAR_LINK_ICON = '<svg viewBox="0 0 16 16" width="12" height="12"><path fill="currentColor" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg>';
 const DOLLAR_ICON = '<svg viewBox="0 0 16 16" width="14" height="14"><path fill="currentColor" d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495zM8.634 8.1C9.858 8.418 10.44 9 10.44 9.89c0 1.12-.789 1.816-2.007 1.931V8.1z"/></svg>';
@@ -1518,7 +1518,7 @@ function buildMonthlyCostSummary(
         if (dayNum > 1) {
             dataCoverageNote = tBi(
                 `Data recorded from ${breakdown.earliestDate}. Earlier usage in this month is not tracked.`,
-                `数据从 ${breakdown.earliestDate} 开始记录。本月更早的用量未被追踪。`,
+                ` ${breakdown.earliestDate} 。。`,
             );
         }
     }
@@ -1527,16 +1527,16 @@ function buildMonthlyCostSummary(
 
     // Header with title and calendar link
     html += `<div class="prc-monthly-header">
-        <h2>${DOLLAR_ICON} ${tBi(`${monthEn} ${breakdown.year} Cost`, `${breakdown.year}年${monthZh}费用`)}</h2>
+        <h2>${DOLLAR_ICON} ${tBi(`${monthEn} ${breakdown.year} Cost`, `${breakdown.year}${monthZh}`)}</h2>
         <button class="prc-monthly-calendar-link" data-switch-tab="calendar">
-            ${CALENDAR_LINK_ICON} ${tBi('View History', '查看历史')}
+            ${CALENDAR_LINK_ICON} ${tBi('View History', '')}
         </button>
     </div>`;
 
     if (models.length === 0 && grandTotal === 0) {
         html += `<p class="prc-monthly-empty">${tBi(
             'No cost data recorded for this month yet.',
-            '本月暂无费用数据。',
+            '。',
         )}</p>`;
         html += `</section>`;
         return html;
@@ -1546,16 +1546,16 @@ function buildMonthlyCostSummary(
     const archivedLabel = isCurrentMonth
         ? tBi(
             `${breakdown.cycleCount} archived cycle${breakdown.cycleCount !== 1 ? 's' : ''} + current`,
-            `${breakdown.cycleCount} 个已归档周期 + 当前`,
+            `${breakdown.cycleCount}  + `,
         )
         : tBi(
             `${totalCycles} cycle${totalCycles !== 1 ? 's' : ''}`,
-            `${totalCycles} 个周期`,
+            `${totalCycles} `,
         );
 
     html += `<div class="prc-monthly-grand">
         <span class="prc-monthly-grand-val">${fmtUsd(grandTotal)}</span>
-        <span class="prc-monthly-grand-label">${tBi('Total', '总计')}</span>
+        <span class="prc-monthly-grand-label">${tBi('Total', '')}</span>
         <span class="prc-monthly-grand-breakdown">${archivedLabel}</span>
     </div>`;
 

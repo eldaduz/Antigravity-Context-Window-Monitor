@@ -213,11 +213,11 @@ export class GMTracker {
             // (missing conversations/context growth/error details) until each
             // conversation becomes active again.
             const isCurrentActive = activeCascadeId && t.cascadeId === activeCascadeId;
-            const canSkipIdle = cached 
+            const canSkipIdle = cached
                 && cached.calls.length > 0
-                && !isRunning 
-                && !justBecameIdle 
-                && cached.totalSteps === t.stepCount 
+                && !isRunning
+                && !justBecameIdle
+                && cached.totalSteps === t.stepCount
                 && !isCurrentActive;
 
             if (canSkipIdle) {
@@ -1056,7 +1056,7 @@ export class GMTracker {
 
         // Build a set of model IDs for pool matching.
         // poolModelFilter can contain model IDs ("MODEL_PLACEHOLDER_M26")
-        // or display labels ("Claude Opus 4.6 (Thinking)" / "Claude Opus 4.6 (思考)").
+        // or display labels ("Claude Opus 4.6 (Thinking)" / "Claude Opus 4.6 ()").
         // Resolve everything to model IDs for stable, language-independent matching.
         const poolModelIds = poolModelFilter && poolModelFilter.length > 0
             ? new Set(poolModelFilter.map(m => resolveModelId(m) || m))
@@ -1065,16 +1065,16 @@ export class GMTracker {
         // Helper: check if a call belongs to the target pool (by model ID or label fuzzy fallback)
         const callMatchesPool = (call: GMCallEntry): boolean => {
             if (!poolModelIds) { return true; }
-            
+
             // 1. Direct Model ID match (Highest priority & 100% precise)
             if (poolModelIds.has(call.model) || (call.responseModel && poolModelIds.has(call.responseModel))) {
                 return true;
             }
-            
+
             // 2. Display Name fuzzy fallback (Backward compatibility for legacy snapshots or translation mismatches)
             const callDisplay = normalizeModelDisplayName(call.modelDisplay || call.model) || call.responseModel || call.model;
             const callDisplayLower = callDisplay.toLowerCase();
-            
+
             for (const item of poolModelFilter || []) {
                 const itemLower = item.toLowerCase();
                 if (callDisplayLower.includes(itemLower) || itemLower.includes(callDisplayLower) ||
@@ -1139,7 +1139,7 @@ export class GMTracker {
                 if (email && call.accountEmail && call.accountEmail !== email) { continue; }
                 if (!callMatchesPool(call)) { continue; }
                 if (!shouldArchiveByCutoff(call)) { continue; }
-                
+
                 // Prevent history data pollution
                 if (dayStartMs > 0 && call.createdAt) {
                     const callMs = Date.parse(call.createdAt);
@@ -1194,19 +1194,19 @@ export class GMTracker {
 
         // Supports both model ID and model label matching
         const filterSet = new Set(modelLabels.map(l => l.toLowerCase()));
-        
+
         const hasCutoff = [...this._archivedAccountModelCutoffs.keys()].some(key => {
             if (!key.startsWith(`${email}|`)) { return false; }
             const cutoff = this._archivedAccountModelCutoffs.get(key);
             if (!cutoff || !isUsableArchiveCutoff(cutoff)) { return false; }
             const archivedModel = key.substring(email.length + 1).toLowerCase();
-            
+
             // Direct model ID match
             if (filterSet.has(archivedModel)) { return true; }
-            
+
             // Display label fuzzy match
             const archivedDisplay = normalizeModelDisplayName(archivedModel).toLowerCase();
-            return [...filterSet].some(item => 
+            return [...filterSet].some(item =>
                 archivedDisplay.includes(item) || item.includes(archivedDisplay)
             );
         });
@@ -1214,26 +1214,26 @@ export class GMTracker {
 
         // Check if there are any un-archived calls for this account+pool
         const resolvedFilterIds = new Set(modelLabels.map(l => resolveModelId(l) || l));
-        
+
         for (const [, conv] of this._cache) {
             const baseline = this._callBaselines.get(conv.cascadeId) || 0;
             const activeCalls = baseline > 0 ? conv.calls.slice(baseline) : conv.calls;
             for (const call of activeCalls) {
                 if (call.accountEmail && call.accountEmail !== email) { continue; }
                 if (!call.accountEmail && email) { continue; }
-                
+
                 // Check if call belongs to this pool (with display name fallback)
                 let matchesPool = resolvedFilterIds.has(call.model)
                     || (call.responseModel && resolvedFilterIds.has(call.responseModel));
                 if (!matchesPool) {
                     const callDisplay = normalizeModelDisplayName(call.modelDisplay || call.model) || call.responseModel || call.model;
                     const callDisplayLower = callDisplay.toLowerCase();
-                    matchesPool = [...filterSet].some(item => 
+                    matchesPool = [...filterSet].some(item =>
                         callDisplayLower.includes(item) || item.includes(callDisplayLower)
                     );
                 }
                 if (!matchesPool) { continue; }
-                
+
                 // Check if this call is already archived
                 const archKey = buildGMArchiveKey(call);
                 if (!this._archivedCallIds.has(call.executionId) && !this._archivedCallIds.has(archKey)) {

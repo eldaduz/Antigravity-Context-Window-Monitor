@@ -451,10 +451,10 @@ export class QuotaTracker {
             if (!ms.currentSession) { continue; }
             // Match by account email prefix in stateKey (format: "email:modelId")
             if (!stateKey.startsWith(`${email}:`)) { continue; }
-            
+
             // Extract canonical modelId from stateKey for precise matching
             const modelId = stateKey.substring(email.length + 1).toLowerCase();
-            
+
             // Match by model ID or display label (pool scope)
             const sessionLabel = ms.currentSession.modelLabel?.toLowerCase() || '';
             const hasPoolMatch = filterSet.has(modelId)

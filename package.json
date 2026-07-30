@@ -1,8 +1,8 @@
 {
   "name": "antigravity-context-monitor",
   "displayName": "Antigravity Context Window Monitor",
-  "description": "Real-time context window usage monitor for Antigravity (实时显示 Antigravity 当前会话的上下文窗口使用量和剩余量)",
-  "version": "1.16.14",
+  "description": "Real-time context window usage monitor for Antigravity ( Antigravity )",
+  "version": "1.16.15",
   "publisher": "AGI-is-going-to-arrive",
   "license": "MIT",
   "repository": {
@@ -28,80 +28,80 @@
     "commands": [
       {
         "command": "antigravity-context-monitor.showDetails",
-        "title": "Show Context Window Details / 显示上下文窗口详情"
+        "title": "Show Context Window Details"
       },
       {
         "command": "antigravity-context-monitor.refresh",
-        "title": "Refresh Context Window Monitor / 刷新上下文窗口监控"
+        "title": "Refresh Context Window Monitor"
       },
       {
         "command": "antigravity-context-monitor.switchLanguage",
-        "title": "Switch Display Language / 切换显示语言"
+        "title": "Switch Display Language"
       },
       {
         "command": "antigravity-context-monitor.showActivityPanel",
-        "title": "Show Model Activity / 显示模型活动"
+        "title": "Show Model Activity"
       }
     ],
     "configuration": {
-      "title": "Antigravity Context Monitor / 上下文监控设置",
+      "title": "Antigravity Context Monitor",
       "properties": {
         "antigravityContextMonitor.pollingInterval": {
           "type": "number",
           "default": 5,
-          "description": "Polling interval in seconds / 轮询间隔（秒）"
+          "description": "Polling interval in seconds"
         },
         "antigravityContextMonitor.statusBar.showContext": {
           "type": "boolean",
           "default": true,
-          "description": "Show context usage (e.g. 45k/1M, 4.5%) in status bar / 状态栏显示上下文用量"
+          "description": "Show context usage (e.g. 45k/1M, 4.5%) in status bar"
         },
         "antigravityContextMonitor.statusBar.showQuota": {
           "type": "boolean",
           "default": true,
-          "description": "Show current model quota indicator (e.g. 🟢85%) in status bar / 状态栏显示当前模型额度"
+          "description": "Show current model quota indicator (e.g. 🟢85%) in status bar"
         },
         "antigravityContextMonitor.statusBar.showResetCountdown": {
           "type": "boolean",
           "default": true,
-          "description": "Show quota reset countdown (e.g. ⏳4h32m) in status bar / 状态栏显示重置倒计时"
+          "description": "Show quota reset countdown (e.g. ⏳4h32m) in status bar"
         },
         "antigravityContextMonitor.quotaNotificationThreshold": {
           "type": "number",
           "default": 20,
           "minimum": 0,
           "maximum": 99,
-          "description": "Show a warning notification when any model's remaining quota drops below this percentage (0 to disable) / 当模型剩余额度低于此百分比时弹出警告通知（设为 0 可禁用）"
+          "description": "Show a warning notification when any model's remaining quota drops below this percentage (0 to disable)"
         },
         "antigravityContextMonitor.activity.maxRecentSteps": {
           "type": "number",
           "default": 100,
           "minimum": 10,
           "maximum": 500,
-          "description": "Maximum number of recent activity steps to keep in the timeline / 活动时间线最多保留的操作条数"
+          "description": "Maximum number of recent activity steps to keep in the timeline"
         },
         "antigravityContextMonitor.activity.maxArchives": {
           "type": "number",
           "default": 20,
           "minimum": 1,
           "maximum": 100,
-          "description": "Maximum number of activity archives to keep / 活动归档最多保留份数"
+          "description": "Maximum number of activity archives to keep"
         },
         "antigravityContextMonitor.statusBar.showAiCredits": {
           "type": "boolean",
           "default": true,
-          "description": "Show AI Credits balance (e.g. ⚡14701) in status bar and tooltip / 状态栏和 tooltip 显示 AI 专属积分余额"
+          "description": "Show AI Credits balance (e.g. ⚡14701) in status bar and tooltip"
         },
         "antigravityContextMonitor.statusBar.tooltipDensity": {
           "type": "string",
           "enum": ["auto", "compact", "full"],
           "default": "auto",
-          "description": "Status bar hover tooltip density. auto adapts to window.zoomLevel and quota row count; compact always trims; full shows all rows (may clip under high zoom). / 状态栏悬停提示密度。auto 随 window.zoomLevel 与配额行数自适应；compact 始终精简；full 显示全部行（高缩放可能裁切）。"
+          "description": "Status bar hover tooltip density. auto adapts to window.zoomLevel and quota row count; compact always trims; full shows all rows (may clip under high zoom)."
         },
         "antigravityContextMonitor.showModelInternalId": {
           "type": "boolean",
           "default": false,
-          "description": "Show internal model ID suffix (e.g. M16, M26) next to model display names. Useful for diagnosing platform-level model changes. / 在模型名后显示内部 ID 后缀（如 M16、M26），用于诊断平台级模型变更。"
+          "description": "Show internal model ID suffix (e.g. M16, M26) next to model display names. Useful for diagnosing platform-level model changes."
         }
       }
     }
@@ -111,7 +111,8 @@
     "watch": "tsc -watch -p ./",
     "test": "vitest run",
     "test:watch": "vitest",
-    "package": "npx -y @vscode/vsce package --no-dependencies"
+    "package": "npx -y @vscode/vsce package --no-dependencies",
+    "check:english": "node scripts/check-english-only.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

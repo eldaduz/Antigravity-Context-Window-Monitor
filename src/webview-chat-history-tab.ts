@@ -74,10 +74,10 @@ function getWorkspaceLabel(workspaceUri: string, repositoryName: string): { labe
     const localPath = fileUriToPath(workspaceUri);
     const cleanPath = localPath.replace(/[\\/]+$/, '');
     const base = cleanPath ? path.basename(cleanPath) : '';
-    const label = base || repositoryName || tBi('Unscoped', '未分组');
+    const label = base || repositoryName || tBi('Unscoped', '');
     const subtitle = repositoryName && repositoryName !== label
         ? repositoryName
-        : (cleanPath || tBi('No workspace path', '无工作区路径'));
+        : (cleanPath || tBi('No workspace path', ''));
     return { label, subtitle, localPath: cleanPath };
 }
 
@@ -128,7 +128,7 @@ function buildEntries(
 
         return {
             cascadeId: trajectory.cascadeId,
-            title: trajectory.summary || `${tBi('Conversation', '对话')} ${trajectory.cascadeId.substring(0, 8)}`,
+            title: trajectory.summary || `${tBi('Conversation', '')} ${trajectory.cascadeId.substring(0, 8)}`,
             workspaceLabel: workspaceMeta.label,
             workspacePath: workspaceMeta.localPath,
             workspaceUri,
@@ -168,7 +168,7 @@ function buildGroups(entries: HistoryEntry[]): HistoryGroup[] {
         grouped.set(key, {
             key,
             label: entry.workspaceLabel,
-            subtitle: entry.workspacePath || entry.repositoryName || tBi('No workspace path', '无工作区路径'),
+            subtitle: entry.workspacePath || entry.repositoryName || tBi('No workspace path', ''),
             entries: [entry],
             isCurrentWorkspace: entry.isCurrentWorkspace,
         });
@@ -218,21 +218,21 @@ function renderShortcuts(entries: HistoryEntry[], currentUsage: ContextUsage | n
         {
             filter: 'current',
             icon: ICON.folder,
-            title: tBi('Current Workspace', '当前工作区'),
+            title: tBi('Current Workspace', ''),
             count: currentWorkspaceCount,
             active: currentWorkspaceCount > 0,
         },
         {
             filter: 'currentrepo',
             icon: ICON.git,
-            title: currentRepoName || tBi('Current Repo', '当前仓库'),
+            title: currentRepoName || tBi('Current Repo', ''),
             count: currentRepoCount,
             active: currentRepoCount > 0,
         },
         {
             filter: 'recordable',
             icon: ICON.database,
-            title: tBi('Backup Ready', '可备份'),
+            title: tBi('Backup Ready', ''),
             count: recordableCount,
             active: recordableCount > 0,
         },
@@ -264,17 +264,17 @@ function renderToolbar(): string {
                     id="historySearchInput"
                     class="ses-search-input"
                     type="text"
-                    placeholder="${esc(tBi('Search title / folder / repo / model...', '搜索标题 / 文件夹 / 仓库 / 模型...'))}"
+                    placeholder="${esc(tBi('Search title / folder / repo / model...', ' /  /  / ...'))}"
                     autocomplete="off"
                     spellcheck="false"
                 />
             </div>
-            <div class="ses-filters" role="tablist" aria-label="${esc(tBi('Session catalog filters', '会话目录筛选'))}">
-                <button class="ses-filter-btn is-active" data-history-filter="all">${tBi('All', '全部')}</button>
-                <button class="ses-filter-btn" data-history-filter="current">${tBi('Workspace', '工作区')}</button>
-                <button class="ses-filter-btn" data-history-filter="currentrepo">${tBi('Repo', '仓库')}</button>
-                <button class="ses-filter-btn" data-history-filter="running">${tBi('Running', '运行中')}</button>
-                <button class="ses-filter-btn" data-history-filter="recordable">${tBi('Recordable', '可备份')}</button>
+            <div class="ses-filters" role="tablist" aria-label="${esc(tBi('Session catalog filters', ''))}">
+                <button class="ses-filter-btn is-active" data-history-filter="all">${tBi('All', '')}</button>
+                <button class="ses-filter-btn" data-history-filter="current">${tBi('Workspace', '')}</button>
+                <button class="ses-filter-btn" data-history-filter="currentrepo">${tBi('Repo', '')}</button>
+                <button class="ses-filter-btn" data-history-filter="running">${tBi('Running', '')}</button>
+                <button class="ses-filter-btn" data-history-filter="recordable">${tBi('Recordable', '')}</button>
             </div>
         </div>`;
 }
@@ -310,25 +310,25 @@ function renderRow(entry: HistoryEntry): string {
     // ── Storage badges (inline, minimal) ──
     const storageParts: string[] = [];
     if (entry.hasBrain) { storageParts.push('Brain'); }
-    if (entry.hasRecording) { storageParts.push(tBi('Rec', '录屏')); }
+    if (entry.hasRecording) { storageParts.push(tBi('Rec', '')); }
     if (entry.hasPb) { storageParts.push('PB'); }
 
     // ── Action buttons (icon-only, compact, CSS tooltip) ──
     const actions = `
         <div class="ses-row-actions">
             <button
-                class="ses-act-btn" data-tooltip="${esc(tBi('Open Workspace', '打开工作区'))}"
+                class="ses-act-btn" data-tooltip="${esc(tBi('Open Workspace', ''))}"
                 data-history-action="workspace"
                 data-history-uri="${esc(entry.workspaceUri)}"
                 ${entry.workspaceUri ? '' : 'disabled'}
             >${ICON.folder}</button>
             <button
-                class="ses-act-btn ses-act-accent" data-tooltip="${esc(tBi('Record Folder', '记录目录'))}"
+                class="ses-act-btn ses-act-accent" data-tooltip="${esc(tBi('Record Folder', ''))}"
                 data-history-action="record"
                 data-cascade-id="${esc(entry.cascadeId)}"
             >${ICON.chat}</button>
             <button
-                class="ses-act-btn" data-tooltip="${esc(tBi('PB File', 'PB 文件'))}"
+                class="ses-act-btn" data-tooltip="${esc(tBi('PB File', 'PB '))}"
                 data-history-action="pb"
                 data-cascade-id="${esc(entry.cascadeId)}"
                 ${entry.hasPb ? '' : 'disabled'}
@@ -348,8 +348,8 @@ function renderRow(entry: HistoryEntry): string {
             <div class="ses-row-head">
                 <h3 class="ses-row-title" title="${esc(entry.cascadeId)}">${esc(entry.title)}</h3>
                 <div class="ses-row-badges">
-                    ${entry.isCurrentSession ? `<span class="ses-badge is-current">${tBi('Current', '当前')}</span>` : ''}
-                    ${entry.isCurrentWorkspace ? `<span class="ses-badge is-workspace">${tBi('WS', '本区')}</span>` : ''}
+                    ${entry.isCurrentSession ? `<span class="ses-badge is-current">${tBi('Current', '')}</span>` : ''}
+                    ${entry.isCurrentWorkspace ? `<span class="ses-badge is-workspace">${tBi('WS', '')}</span>` : ''}
                     <span class="ses-badge ${statusClass}">${esc(entry.status || 'UNKNOWN')}</span>
                 </div>
             </div>
@@ -376,9 +376,9 @@ function renderGroup(group: HistoryGroup, index: number): string {
                         <span class="ses-group-path">${esc(group.subtitle)}</span>
                     </div>
                     <div class="ses-group-chips">
-                        ${group.isCurrentWorkspace ? `<span class="ses-group-chip is-ws">${tBi('Current', '当前')}</span>` : ''}
+                        ${group.isCurrentWorkspace ? `<span class="ses-group-chip is-ws">${tBi('Current', '')}</span>` : ''}
                         <span class="ses-group-chip">${group.entries.length}</span>
-                        ${runningCount > 0 ? `<span class="ses-group-chip is-run">${runningCount} ${tBi('run', '运行')}</span>` : ''}
+                        ${runningCount > 0 ? `<span class="ses-group-chip is-run">${runningCount} ${tBi('run', '')}</span>` : ''}
                     </div>
                 </div>
             </summary>
@@ -398,7 +398,7 @@ export function buildChatHistoryTabContent(
     if (!trajectories || trajectories.length === 0) {
         return `<p class="empty-msg">${tBi(
             'Waiting for trajectory data... the session catalog will appear after the first LS sync.',
-            '正在等待轨迹数据... 首次和 LS 同步后会自动显示会话目录。',
+            '...  LS 。',
         )}</p>`;
     }
 

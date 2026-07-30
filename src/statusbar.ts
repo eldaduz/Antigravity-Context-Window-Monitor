@@ -5,6 +5,7 @@ import { isShowModelShortId } from './models';
 import { t, tBi, getLanguage } from './i18n';
 import { formatResetAbsolute, formatResetContext, formatResetCountdownFromMs } from './reset-time';
 import { getDaysUntilBillingDay } from './billing-day';
+import { collapseModelQuotas, getResetHorizon } from './quota-families';
 import {
     applyLineBudget,
     ensureCtaLast,
@@ -508,7 +509,7 @@ export class StatusBarManager {
         const density = this.readDensity();
         const zoomLevel = this.readZoomLevel();
         const lang = getLanguage();
-        const quotaRowCount = this.cachedConfigs.filter(c => c.quotaInfo).length;
+        const quotaRowCount = collapseModelQuotas(this.cachedConfigs).length;
         const effective = resolveEffectiveMode(density, zoomLevel, quotaRowCount, lang);
         // full density keeps normal layout detail but no soft caps
         const isCompact = density !== 'full' && effective === 'compact';
@@ -594,7 +595,7 @@ export class StatusBarManager {
             truncateByDisplayWidth(rawTitle, SESSION_MAX_DISPLAY_WIDTH),
         );
         const safeModelName = escapeMarkdown(usage.modelDisplayName);
-        const tokenUnit = tBi('tokens', '令牌');
+        const tokenUnit = tBi('tokens', '');
 
         const lines = [
             `📊 ${t('tooltip.title')}`,
@@ -685,14 +686,18 @@ export class StatusBarManager {
             const planStr = this.cachedTierName && this.cachedTierName !== this.cachedPlanName
                 ? `**${escapeMarkdown(this.cachedPlanName)}** · **${escapeMarkdown(this.cachedTierName)}**`
                 : `**${escapeMarkdown(this.cachedPlanName)}**`;
-            result.push(`👤 ${tBi('Plan', '计划')}: ${planStr}`);
+            result.push(`👤 ${tBi('Plan', '')}: ${planStr}`);
         } else if (this.cachedPlanName && opts.isCompact) {
             // compact: fold plan into a single short line only if present
             const planStr = escapeMarkdown(this.cachedPlanName);
             result.push(`👤 ${planStr}`);
         }
 
-        const quotaModels = this.cachedConfigs.filter(c => c.quotaInfo);
+        const quotaModels = collapseModelQuotas(this.cachedConfigs).map(({ family, quotaInfo }) => ({
+            model: family,
+            label: family,
+            quotaInfo,
+        }));
         if (quotaModels.length === 0) {
             return result;
         }
@@ -708,16 +713,16 @@ export class StatusBarManager {
             const shown = rows.length;
             const shownOf = tBi(
                 `Showing ${shown}/${total}`,
-                `显示 ${shown}/${total}`,
+                ` ${shown}/${total}`,
             );
-            result.push(`⚡ ${tBi('Model Quota', '模型配额')}  (${shownOf})`);
+            result.push(`⚡ ${tBi('Model Quota', '')}  (${shownOf})`);
         } else {
-            result.push(`⚡ ${tBi('Model Quota', '模型配额')}`);
+            result.push(`⚡ ${tBi('Model Quota', '')}`);
         }
         result.push('');
 
         const now = Date.now();
-        const header = `| ${tBi('Model', '模型')} | % | ${tBi('Reset', '重置')} |`;
+        const header = `| ${tBi('Model', '')} | % | ${tBi('Reset', '')} |`;
         const sep = '|:--|--:|--:|';
         const tableRows: string[] = [];
         for (const c of rows) {
@@ -729,7 +734,7 @@ export class StatusBarManager {
                 const resetDate = new Date(qi.resetTime);
                 const diffMs = resetDate.getTime() - now;
                 if (diffMs > 0) {
-                    resetStr = formatResetContext(qi.resetTime, { nowMs: now });
+                    resetStr = `${getResetHorizon(qi.resetTime, now)} · ${formatResetContext(qi.resetTime, { nowMs: now })}`;
                 }
             }
             const label = escapeMarkdown(
@@ -747,7 +752,7 @@ export class StatusBarManager {
             result.push(
                 tBi(
                     `… and ${hiddenCount} more models — click to view all`,
-                    `… 还有 ${hiddenCount} 个模型，点击查看全部`,
+                    `…  ${hiddenCount} ，`,
                 ),
             );
         }
@@ -757,7 +762,7 @@ export class StatusBarManager {
         if (earliest) {
             const earliestIso = earliest.toISOString();
             result.push(
-                `🔔 ${tBi('Earliest reset at', '最近重置时间为')}: **${formatResetAbsolute(earliestIso, { includeSeconds: true })}** ` +
+                `🔔 ${tBi('Earliest reset at', '')}: **${formatResetAbsolute(earliestIso, { includeSeconds: true })}** ` +
                 `(${formatResetCountdownFromMs(earliest.getTime() - Date.now())})`
             );
         }
@@ -768,7 +773,7 @@ export class StatusBarManager {
                 const resetDate = new Date(currentConfig.quotaInfo.resetTime);
                 if (resetDate.getTime() > Date.now()) {
                     result.push(
-                        `⏳ ${tBi('Current model resets at', '当前模型重置于')}: ` +
+                        `⏳ ${tBi('Current model resets at', '')}: ` +
                         `**${formatResetAbsolute(currentConfig.quotaInfo.resetTime, { includeSeconds: true })}** ` +
                         `(${formatResetCountdownFromMs(resetDate.getTime() - Date.now())}, ${escapeMarkdown(currentConfig.label)})`
                     );
@@ -811,7 +816,7 @@ export class StatusBarManager {
                 : (currentUsage.usagePercent > 100 ? ` [${t('panel.compressing')}]` : '');
             const imageTag = currentUsage.imageGenStepCount > 0 ? ` [📷×${currentUsage.imageGenStepCount}]` : '';
             const gapsTag = currentUsage.hasGaps ? ` [⚠️${t('panel.gaps')}]` : '';
-            const tokenUnit = tBi('tokens', '令牌');
+            const tokenUnit = tBi('tokens', '');
             const compressionSource = compressionStats
                 ? (compressionStats.source === 'context' ? t('tooltip.contextDrop') : t('tooltip.checkpointDrop'))
                 : '';
@@ -864,12 +869,12 @@ export class StatusBarManager {
 
         // ─── Language Switch Entry ────────────────────────────────────────
         const langLabels: Record<string, string> = {
-            zh: '中文',
+            zh: '',
             en: 'English',
-            both: tBi('Bilingual', '双语'),
+            both: tBi('Bilingual', ''),
         };
         items.push({
-            label: `$(gear) ${tBi('Settings', '设置')}`,
+            label: `$(gear) ${tBi('Settings', '')}`,
             kind: vscode.QuickPickItemKind.Separator
         });
         items.push({
@@ -931,18 +936,18 @@ export class StatusBarManager {
             let refreshStr = '';
             if (daysLeft !== null) {
                 if (daysLeft === 0) {
-                    refreshStr = ` (${tBi('expires today', '今日到期')})`;
+                    refreshStr = ` (${tBi('expires today', '')})`;
                 } else {
-                    refreshStr = ` (${daysLeft}${tBi('d until expiry', '天后到期')})`;
+                    refreshStr = ` (${daysLeft}${tBi('d until expiry', '')})`;
                 }
             } else {
-                refreshStr = ` (${tBi('expiry date not set', '到期日未设置')})`;
+                refreshStr = ` (${tBi('expiry date not set', '')})`;
             }
-            result.push(`⚡ ${tBi('AI Credits', 'AI 积分')}: **${this.cachedCreditsTotal.toLocaleString()}**${refreshStr}`);
+            result.push(`⚡ ${tBi('AI Credits', 'AI ')}: **${this.cachedCreditsTotal.toLocaleString()}**${refreshStr}`);
         } else if (!compact && this.cachedBillingDay > 0) {
             const daysLeft = this.getDaysUntilRefresh();
             if (daysLeft !== null && daysLeft > 0) {
-                result.push(`⚡ ${tBi('Credits expire in', '积分到期还有')} **${daysLeft}** ${tBi('days', '天')}`);
+                result.push(`⚡ ${tBi('Credits expire in', '')} **${daysLeft}** ${tBi('days', '')}`);
             }
         }
         return result;

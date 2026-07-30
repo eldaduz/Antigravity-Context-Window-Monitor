@@ -65,16 +65,16 @@ export function getScript(): string {
             var vscode = acquireVsCodeApi();
             var collectPricingInputOverrides = (${collectPricingInputOverrides.toString()});
             var savedState = vscode.getState() || {};
-            var copiedText = ${JSON.stringify(`✓ ${tBi('Copied', '已复制')}`)};
-            var savedText = ${JSON.stringify(`✓ ${tBi('Saved', '已保存')}`)};
-            var resetText = ${JSON.stringify(`✓ ${tBi('Reset', '已重置')}`)};
-            var openingText = ${JSON.stringify(tBi('Opening...', '正在打开...'))};
-            var revealingText = ${JSON.stringify(tBi('Revealing...', '正在定位...'))};
-            var openedText = ${JSON.stringify(`✓ ${tBi('Opened', '已打开')}`)};
-            var revealedText = ${JSON.stringify(`✓ ${tBi('Revealed', '已定位')}`)};
-            var openFailedText = ${JSON.stringify(tBi('Open failed', '打开失败'))};
-            var revealFailedText = ${JSON.stringify(tBi('Reveal failed', '定位失败'))};
-            var invalidBillingDayText = ${JSON.stringify(tBi('Invalid', '无效'))};
+            var copiedText = ${JSON.stringify(`✓ ${tBi('Copied', '')}`)};
+            var savedText = ${JSON.stringify(`✓ ${tBi('Saved', '')}`)};
+            var resetText = ${JSON.stringify(`✓ ${tBi('Reset', '')}`)};
+            var openingText = ${JSON.stringify(tBi('Opening...', '...'))};
+            var revealingText = ${JSON.stringify(tBi('Revealing...', '...'))};
+            var openedText = ${JSON.stringify(`✓ ${tBi('Opened', '')}`)};
+            var revealedText = ${JSON.stringify(`✓ ${tBi('Revealed', '')}`)};
+            var openFailedText = ${JSON.stringify(tBi('Open failed', ''))};
+            var revealFailedText = ${JSON.stringify(tBi('Reveal failed', ''))};
+            var invalidBillingDayText = ${JSON.stringify(tBi('Invalid', ''))};
 
             function setFeedback(id, text) {
                 var el = document.getElementById(id);
@@ -157,7 +157,7 @@ export function getScript(): string {
                 document.body.setAttribute('data-tab-hint-enabled', enabled ? 'true' : 'false');
                 var badge = document.getElementById('tabHintState');
                 if (badge) {
-                    badge.textContent = enabled ? ${JSON.stringify(tBi('Auto Hint Enabled', '自动提示已开启'))} : ${JSON.stringify(tBi('Auto Hint Disabled', '自动提示已关闭'))};
+                    badge.textContent = enabled ? ${JSON.stringify(tBi('Auto Hint Enabled', ''))} : ${JSON.stringify(tBi('Auto Hint Disabled', ''))};
                     badge.classList.toggle('is-ready', !!enabled);
                     badge.classList.toggle('is-missing', !enabled);
                 }
@@ -182,7 +182,7 @@ export function getScript(): string {
                     hint.hidden = true;
                     return;
                 }
-                /* data-force-show: 用户手动"立即显示"时设置，跳过 overflow 判断 */
+                /* data-force-show: ""， overflow  */
                 if (hint.hasAttribute('data-force-show')) {
                     hint.hidden = false;
                     return;
@@ -617,7 +617,7 @@ export function getScript(): string {
                 }
                 if (msg.command === 'panelPrefUpdated' && msg.key === 'panelShowTabScrollHint') {
                     setTabHintState(!!msg.value);
-                    /* 启用时不调用 updateTabOverflowHint，避免覆盖 force-show 状态 */
+                    /*  updateTabOverflowHint， force-show  */
                     if (!msg.value) {
                         updateTabOverflowHint();
                     }

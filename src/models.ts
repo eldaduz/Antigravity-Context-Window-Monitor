@@ -100,13 +100,7 @@ const KNOWN_QUOTA_POOLS: Record<string, string> = {
 // This static mapping allows `resolveModelId()` to resolve them back to
 // canonical model IDs, enabling automatic cleanup of legacy persisted data.
 
-const LEGACY_ZH_MODEL_NAMES: Record<string, string> = {
-    'Gemini 3.1 Pro (强)': 'MODEL_PLACEHOLDER_M37',
-    'Gemini 3.1 Pro (弱)': 'MODEL_PLACEHOLDER_M36',
-    'Claude Sonnet 4.6 (思考)': 'MODEL_PLACEHOLDER_M35',
-    'Claude Opus 4.6 (思考)': 'MODEL_PLACEHOLDER_M26',
-    'GPT-OSS 120B (中)': 'MODEL_OPENAI_GPT_OSS_120B_MEDIUM',
-};
+const LEGACY_ZH_MODEL_NAMES: Record<string, string> = {};
 
 // ─── Static Model Display Name Fallbacks ─────────────────────────────────────
 // Used before GetUserStatus has populated API labels, and for retired IDs that
@@ -145,7 +139,7 @@ const RETIRED_PLACEHOLDER_IDS = new Set<string>([
 // ─── Public API ──────────────────────────────────────────────────────────────
 
 /**
- * 启发式智能未知大模型家族推导预测
+ *
  * Predict cpLimit, cpThreshold, and maxTokens based on model keywords.
  * Prevents unknown future models from blindly inheriting a generic 160K fallback.
  */
@@ -205,7 +199,7 @@ export function guessContextLimitSpec(modelId: string): { cpLimit: number; cpThr
         return { cpLimit: 80000, cpThreshold: 40000, maxTokens: 131072, supportsThinking: false };
     }
 
-    // 5. 完全未知反传统新模型 -> 暂不强套死数据（为 0 触发“正在计算阈值...”流光），待会话遥测命中
+    // 5.  -> （ 0 “...”），
     return { cpLimit: 0, cpThreshold: 0, maxTokens: 0, supportsThinking: false };
 }
 

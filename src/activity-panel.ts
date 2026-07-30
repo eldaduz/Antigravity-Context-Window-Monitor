@@ -82,7 +82,7 @@ export function buildGMDataTabContent(
     if (!summary && (!gmSummary || gmSummary.totalCalls === 0)) {
         return `<p class="empty-msg">${tBi(
             'Waiting for data... GM and Activity information will appear automatically.',
-            '正在等待数据... GM 和活动信息将自动显示。',
+            '... GM 。',
         )}</p>`;
     }
 
@@ -2234,19 +2234,19 @@ function buildSummaryBar(s: ActivitySummary | null, gm: GMSummary | null, curren
         const currentConvErrs: Record<string, number> = (currentCascadeId && convCount > 1) ? (byConv[currentCascadeId] || {}) : {};
         const convDelta = Object.values(currentConvErrs).reduce((a, b) => a + b, 0);
         const errCodes = Object.entries(gm2.retryErrorCodes || {}).sort((a, b) => b[1] - a[1]).map(([c, n]) => { const d = currentConvErrs[c] || 0; return d > 0 ? `${c} ×${n} (+${d})` : `${c} ×${n}`; }).join(', ');
-        const wasteInfo = gm2.totalRetryTokens > 0 ? ` | ${fmt(gm2.totalRetryTokens)} ${tBi('tokens wasted', 'token 浪费')}` : '';
-        const tipText = errCodes ? `${errCodes}${wasteInfo}` : `${gm2.totalRetryCount} ${tBi('retries', '重试')}${wasteInfo}`;
+        const wasteInfo = gm2.totalRetryTokens > 0 ? ` | ${fmt(gm2.totalRetryTokens)} ${tBi('tokens wasted', 'token ')}` : '';
+        const tipText = errCodes ? `${errCodes}${wasteInfo}` : `${gm2.totalRetryCount} ${tBi('retries', '')}${wasteInfo}`;
         const deltaHtml = convDelta > 0 ? ` <span class="err-delta" style="font-size:0.75em">+${convDelta}</span>` : '';
-        return `<div class="act-stat act-stat-warn" data-tooltip="${esc(tipText)}"><span class="act-stat-icon">${iconErr}</span><span class="act-stat-val">${errTotal > 0 ? errTotal : gm2.totalRetryCount}${deltaHtml}</span><span class="act-stat-label">${tBi('Errors', '报错')}</span></div>`;
+        return `<div class="act-stat act-stat-warn" data-tooltip="${esc(tipText)}"><span class="act-stat-icon">${iconErr}</span><span class="act-stat-val">${errTotal > 0 ? errTotal : gm2.totalRetryCount}${deltaHtml}</span><span class="act-stat-label">${tBi('Errors', '')}</span></div>`;
     };
 
     // When no activity data, show GM-only summary
     if (!s && gm) {
         return `<div class="act-summary-bar">
-            <div class="act-stat"><span class="act-stat-icon">${iconCalls}</span><span class="act-stat-val val-calls">${gm.totalCalls}</span><span class="act-stat-label">${tBi('Calls', '调用')}</span></div>
-            <div class="act-stat"><span class="act-stat-icon">${iconIn}</span><span class="act-stat-val val-in">${fmt(gm.totalInputTokens)}</span><span class="act-stat-label">${tBi('In', '输入')}</span></div>
-            <div class="act-stat"><span class="act-stat-icon">${iconOut}</span><span class="act-stat-val val-out">${fmt(gm.totalOutputTokens)}</span><span class="act-stat-label">${tBi('Out', '输出')}</span></div>
-            ${gm.totalCacheRead > 0 ? `<div class="act-stat"><span class="act-stat-icon">${iconCache}</span><span class="act-stat-val val-cache">${fmt(gm.totalCacheRead)}</span><span class="act-stat-label">${tBi('Cache', '缓存')}</span></div>` : ''}
+            <div class="act-stat"><span class="act-stat-icon">${iconCalls}</span><span class="act-stat-val val-calls">${gm.totalCalls}</span><span class="act-stat-label">${tBi('Calls', '')}</span></div>
+            <div class="act-stat"><span class="act-stat-icon">${iconIn}</span><span class="act-stat-val val-in">${fmt(gm.totalInputTokens)}</span><span class="act-stat-label">${tBi('In', '')}</span></div>
+            <div class="act-stat"><span class="act-stat-icon">${iconOut}</span><span class="act-stat-val val-out">${fmt(gm.totalOutputTokens)}</span><span class="act-stat-label">${tBi('Out', '')}</span></div>
+            ${gm.totalCacheRead > 0 ? `<div class="act-stat"><span class="act-stat-icon">${iconCache}</span><span class="act-stat-val val-cache">${fmt(gm.totalCacheRead)}</span><span class="act-stat-label">${tBi('Cache', '')}</span></div>` : ''}
             ${gm.totalCredits > 0 ? `<div class="act-stat"><span class="act-stat-icon">${iconCredits}</span><span class="act-stat-val val-credits">${gm.totalCredits.toFixed(1)}</span><span class="act-stat-label">Credits</span></div>` : ''}
             ${buildErrorChip(gm)}
         </div>`;
@@ -2257,7 +2257,7 @@ function buildSummaryBar(s: ActivitySummary | null, gm: GMSummary | null, curren
     // GM-specific: calls chip
     let gmCallsChip = '';
     if (gm && gm.totalCalls > 0) {
-        gmCallsChip = `<div class="act-stat" data-tooltip="${tBi('Total LLM API calls', 'LLM API 调用总次数')}"><span class="act-stat-icon">${iconCalls}</span><span class="act-stat-val val-calls">${gm.totalCalls}</span><span class="act-stat-label">${tBi('Calls', '调用')}</span></div>`;
+        gmCallsChip = `<div class="act-stat" data-tooltip="${tBi('Total LLM API calls', 'LLM API ')}"><span class="act-stat-icon">${iconCalls}</span><span class="act-stat-val val-calls">${gm.totalCalls}</span><span class="act-stat-label">${tBi('Calls', '')}</span></div>`;
     }
 
     // GM vs CHECKPOINT token selection
@@ -2265,28 +2265,28 @@ function buildSummaryBar(s: ActivitySummary | null, gm: GMSummary | null, curren
     const inTokens = hasGM ? s.gmTotalInputTokens! : s.totalInputTokens;
     const outTokens = hasGM ? s.gmTotalOutputTokens! : s.totalOutputTokens;
     const inTooltip = hasGM
-        ? tBi('Input tokens (all conversations)', '输入 token（全部对话）')
-        : tBi('Cumulative input tokens consumed', '累计消耗的输入 token 数');
+        ? tBi('Input tokens (all conversations)', ' token（）')
+        : tBi('Cumulative input tokens consumed', ' token ');
     const outTooltip = hasGM
-        ? tBi('Output tokens (all conversations)', '输出 token（全部对话）')
-        : tBi('Cumulative output tokens generated', '累计生成的输出 token 数');
+        ? tBi('Output tokens (all conversations)', ' token（）')
+        : tBi('Cumulative output tokens generated', ' token ');
 
     // Cache chip
     const cacheTokens = s.gmTotalCacheRead || 0;
-    const cacheChip = cacheTokens > 0 ? `<div class="act-stat" data-tooltip="${tBi('Cache read tokens', '缓存读取 token')}"><span class="act-stat-icon">${iconCache}</span><span class="act-stat-val val-cache">${fmt(cacheTokens)}</span><span class="act-stat-label">${tBi('Cache', '缓存')}</span></div>` : '';
+    const cacheChip = cacheTokens > 0 ? `<div class="act-stat" data-tooltip="${tBi('Cache read tokens', ' token')}"><span class="act-stat-icon">${iconCache}</span><span class="act-stat-val val-cache">${fmt(cacheTokens)}</span><span class="act-stat-label">${tBi('Cache', '')}</span></div>` : '';
 
     // Credits chip
     const credits = s.gmTotalCredits || 0;
-    const creditsChip = credits > 0 ? `<div class="act-stat" data-tooltip="${tBi('Credits consumed', '消耗的积分')}"><span class="act-stat-icon">${iconCredits}</span><span class="act-stat-val val-credits">${credits.toFixed(1)}</span><span class="act-stat-label">${tBi('Credits', '积分')}</span></div>` : '';
+    const creditsChip = credits > 0 ? `<div class="act-stat" data-tooltip="${tBi('Credits consumed', '')}"><span class="act-stat-icon">${iconCredits}</span><span class="act-stat-val val-credits">${credits.toFixed(1)}</span><span class="act-stat-label">${tBi('Credits', '')}</span></div>` : '';
 
     // Tool output chip
-    const toolOutChip = s.totalToolReturnTokens > 0 ? `<div class="act-stat" data-tooltip="${tBi('Tokens returned by tool calls', '工具调用返回的 token 数')}"><span class="act-stat-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg></span><span class="act-stat-val">${fmt(s.totalToolReturnTokens)}</span><span class="act-stat-label">${tBi('Tool Out', '工具输出')}</span></div>` : '';
+    const toolOutChip = s.totalToolReturnTokens > 0 ? `<div class="act-stat" data-tooltip="${tBi('Tokens returned by tool calls', ' token ')}"><span class="act-stat-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg></span><span class="act-stat-val">${fmt(s.totalToolReturnTokens)}</span><span class="act-stat-label">${tBi('Tool Out', '')}</span></div>` : '';
 
     return `
     <div class="act-summary-bar">
         ${gmCallsChip}
-        <div class="act-stat" data-tooltip="${inTooltip}"><span class="act-stat-icon">${iconIn}</span><span class="act-stat-val val-in">${fmt(inTokens)}</span><span class="act-stat-label">${tBi('In', '输入')}</span></div>
-        <div class="act-stat" data-tooltip="${outTooltip}"><span class="act-stat-icon">${iconOut}</span><span class="act-stat-val val-out">${fmt(outTokens)}</span><span class="act-stat-label">${tBi('Out', '输出')}</span></div>
+        <div class="act-stat" data-tooltip="${inTooltip}"><span class="act-stat-icon">${iconIn}</span><span class="act-stat-val val-in">${fmt(inTokens)}</span><span class="act-stat-label">${tBi('In', '')}</span></div>
+        <div class="act-stat" data-tooltip="${outTooltip}"><span class="act-stat-icon">${iconOut}</span><span class="act-stat-val val-out">${fmt(outTokens)}</span><span class="act-stat-label">${tBi('Out', '')}</span></div>
         ${toolOutChip}
         ${cacheChip}
         ${creditsChip}
@@ -2413,9 +2413,9 @@ function buildModelCards(s: ActivitySummary | null, gm: GMSummary | null, active
     // Error toggle button (only shown when any account has errors)
     const errToggleSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
     const errToggleBtn = hasAnyAccountErrors
-        ? `<span class="model-stats-err-toggle is-off" id="modelStatsErrToggle" title="${tBi('Toggle error count visibility', '切换报错次数显示')}">${errToggleSvg} ${tBi('Errors', '报错')}</span>`
+        ? `<span class="model-stats-err-toggle is-off" id="modelStatsErrToggle" title="${tBi('Toggle error count visibility', '')}">${errToggleSvg} ${tBi('Errors', '')}</span>`
         : '';
-    let html = `<h2 class="act-section-title"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>${tBi('Model Stats', '模型统计')}${errToggleBtn}</h2>`;
+    let html = `<h2 class="act-section-title"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>${tBi('Model Stats', '')}${errToggleBtn}</h2>`;
 
 
 
@@ -2433,16 +2433,16 @@ function buildModelCards(s: ActivitySummary | null, gm: GMSummary | null, active
             if (gmStats && gmStats.callCount > 0) {
                 gmSection = `
                 <div class="act-card-divider"></div>
-                <div class="act-card-row"><span>${ICONS.tool} <span>${tBi('Calls', '调用')}</span></span><span class="val val-calls">${gmStats.callCount}</span></div>
-                <div class="act-card-row"><span>${ICONS.clock} <span>${tBi('Avg TTFT', '平均 TTFT')}</span></span><span class="val val-time">${fmtSec(gmStats.avgTTFT)}</span></div>
-                ${'avgStreaming' in gmStats && gmStats.avgStreaming > 0 ? `<div class="act-card-row"><span>${ICONS.sum} <span>${tBi('Avg Stream', '平均流速')}</span></span><span class="val val-time">${fmtSec(gmStats.avgStreaming)}</span></div>` : ''}
-                <div class="act-card-row"><span>${ICONS.coin} <span>${tBi('In', '输入')}</span></span><span class="val val-in">${fmt(gmStats.totalInputTokens)}</span></div>
-                <div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Out', '输出')}</span></span><span class="val val-out">${fmt(gmStats.totalOutputTokens)}</span></div>
-                ${'totalThinkingTokens' in gmStats && gmStats.totalThinkingTokens > 0 ? `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Think', '思考')}</span></span><span class="val val-out">${fmt(gmStats.totalThinkingTokens)}</span></div>` : ''}
-                ${gmStats.totalCacheRead > 0 ? `<div class="act-card-row"><span>${ICONS.save} <span>${tBi('Cache', '缓存')}</span></span><span class="val val-cache">${fmt(gmStats.totalCacheRead)}</span></div>` : ''}
-                ${gmStats.totalCredits > 0 ? `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Credits', '积分')}</span></span><span class="val val-credits">${gmStats.totalCredits.toFixed(1)} <span class="act-credit-calls">(${gmStats.creditCallCount || 0}${tBi('x', '次')})</span></span></div>` : ''}
-                ${(() => { const pr = findPricing(gmStats.responseModel) || findPricing(name); if (!pr) { return ''; } const cost = (gmStats.totalInputTokens * pr.input + gmStats.totalOutputTokens * pr.output + gmStats.totalCacheRead * pr.cacheRead + gmStats.totalThinkingTokens * pr.thinking) / 1_000_000; if (cost <= 0) { return ''; } const costStr = cost < 0.01 ? cost.toFixed(4) : cost < 1 ? cost.toFixed(3) : cost.toFixed(2); return `<div class="act-card-row act-card-row-cost"><span>${ICONS.coin} <span>${tBi('Cost', '费用')}</span></span><span class="val val-cost">$${costStr}</span></div>`; })()}
-                ${gmStats.cacheHitRate > 0 ? `<div class="act-card-row"><span>${ICONS.bar} <span>${tBi('Cache Hit', '缓存命中')}</span></span><span class="val val-hit">${(gmStats.cacheHitRate * 100).toFixed(0)}%</span></div>` : ''}
+                <div class="act-card-row"><span>${ICONS.tool} <span>${tBi('Calls', '')}</span></span><span class="val val-calls">${gmStats.callCount}</span></div>
+                <div class="act-card-row"><span>${ICONS.clock} <span>${tBi('Avg TTFT', ' TTFT')}</span></span><span class="val val-time">${fmtSec(gmStats.avgTTFT)}</span></div>
+                ${'avgStreaming' in gmStats && gmStats.avgStreaming > 0 ? `<div class="act-card-row"><span>${ICONS.sum} <span>${tBi('Avg Stream', '')}</span></span><span class="val val-time">${fmtSec(gmStats.avgStreaming)}</span></div>` : ''}
+                <div class="act-card-row"><span>${ICONS.coin} <span>${tBi('In', '')}</span></span><span class="val val-in">${fmt(gmStats.totalInputTokens)}</span></div>
+                <div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Out', '')}</span></span><span class="val val-out">${fmt(gmStats.totalOutputTokens)}</span></div>
+                ${'totalThinkingTokens' in gmStats && gmStats.totalThinkingTokens > 0 ? `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Think', '')}</span></span><span class="val val-out">${fmt(gmStats.totalThinkingTokens)}</span></div>` : ''}
+                ${gmStats.totalCacheRead > 0 ? `<div class="act-card-row"><span>${ICONS.save} <span>${tBi('Cache', '')}</span></span><span class="val val-cache">${fmt(gmStats.totalCacheRead)}</span></div>` : ''}
+                ${gmStats.totalCredits > 0 ? `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Credits', '')}</span></span><span class="val val-credits">${gmStats.totalCredits.toFixed(1)} <span class="act-credit-calls">(${gmStats.creditCallCount || 0}${tBi('x', '')})</span></span></div>` : ''}
+                ${(() => { const pr = findPricing(gmStats.responseModel) || findPricing(name); if (!pr) { return ''; } const cost = (gmStats.totalInputTokens * pr.input + gmStats.totalOutputTokens * pr.output + gmStats.totalCacheRead * pr.cacheRead + gmStats.totalThinkingTokens * pr.thinking) / 1_000_000; if (cost <= 0) { return ''; } const costStr = cost < 0.01 ? cost.toFixed(4) : cost < 1 ? cost.toFixed(3) : cost.toFixed(2); return `<div class="act-card-row act-card-row-cost"><span>${ICONS.coin} <span>${tBi('Cost', '')}</span></span><span class="val val-cost">$${costStr}</span></div>`; })()}
+                ${gmStats.cacheHitRate > 0 ? `<div class="act-card-row"><span>${ICONS.bar} <span>${tBi('Cache Hit', '')}</span></span><span class="val val-hit">${(gmStats.cacheHitRate * 100).toFixed(0)}%</span></div>` : ''}
                 `;
                 // responseModel footer removed — card header already shows normalized model name
             }
@@ -2465,21 +2465,21 @@ function buildModelCards(s: ActivitySummary | null, gm: GMSummary | null, active
         <div class="act-model-card">
             <div class="act-card-header">${esc(normalizeModelDisplayName(name))}</div>
             <div class="act-card-body">
-                <div class="act-card-row"><span>${ICONS.bar} <span>${tBi('Steps', '步骤')}</span></span><span class="val val-calls">${gms.stepsCovered}</span></div>
-                <div class="act-card-row"><span>${ICONS.clock} <span>${tBi('Avg TTFT', '平均 TTFT')}</span></span><span class="val val-time">${fmtSec(gms.avgTTFT)}</span></div>
-                ${'avgStreaming' in gms && gms.avgStreaming > 0 ? `<div class="act-card-row"><span>${ICONS.sum} <span>${tBi('Avg Stream', '平均流速')}</span></span><span class="val val-time">${fmtSec(gms.avgStreaming)}</span></div>` : ''}
+                <div class="act-card-row"><span>${ICONS.bar} <span>${tBi('Steps', '')}</span></span><span class="val val-calls">${gms.stepsCovered}</span></div>
+                <div class="act-card-row"><span>${ICONS.clock} <span>${tBi('Avg TTFT', ' TTFT')}</span></span><span class="val val-time">${fmtSec(gms.avgTTFT)}</span></div>
+                ${'avgStreaming' in gms && gms.avgStreaming > 0 ? `<div class="act-card-row"><span>${ICONS.sum} <span>${tBi('Avg Stream', '')}</span></span><span class="val val-time">${fmtSec(gms.avgStreaming)}</span></div>` : ''}
                 <div class="act-card-divider"></div>
-                <div class="act-card-row"><span>${ICONS.coin} <span>${tBi('In', '输入')}</span></span><span class="val val-in">${fmt(gms.totalInputTokens)}</span></div>
-                <div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Out', '输出')}</span></span><span class="val val-out">${fmt(gms.totalOutputTokens)}</span></div>
-                ${'totalThinkingTokens' in gms && gms.totalThinkingTokens > 0 ? `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Think', '思考')}</span></span><span class="val val-out">${fmt(gms.totalThinkingTokens)}</span></div>` : ''}
-                ${gms.totalCacheRead > 0 ? `<div class="act-card-row"><span>${ICONS.save} <span>${tBi('Cache', '缓存')}</span></span><span class="val val-cache">${fmt(gms.totalCacheRead)}</span></div>` : ''}
-                ${gms.totalCredits > 0 ? `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Credits', '积分')}</span></span><span class="val val-credits">${gms.totalCredits.toFixed(1)} <span class="act-credit-calls">(${gms.creditCallCount || 0}${tBi('x', '次')})</span></span></div>` : ''}
-                ${(() => { const pr = findPricing(gms.responseModel) || findPricing(name); if (!pr) { return ''; } const cost = (gms.totalInputTokens * pr.input + gms.totalOutputTokens * pr.output + gms.totalCacheRead * pr.cacheRead + gms.totalThinkingTokens * pr.thinking) / 1_000_000; if (cost <= 0) { return ''; } const costStr = cost < 0.01 ? cost.toFixed(4) : cost < 1 ? cost.toFixed(3) : cost.toFixed(2); return `<div class="act-card-row act-card-row-cost"><span>${ICONS.coin} <span>${tBi('Cost', '费用')}</span></span><span class="val val-cost">$${costStr}</span></div>`; })()}
-                ${gms.cacheHitRate > 0 ? `<div class="act-card-row"><span>${ICONS.bar} <span>${tBi('Cache Hit', '缓存命中')}</span></span><span class="val val-hit">${(gms.cacheHitRate * 100).toFixed(0)}%</span></div>` : ''}
+                <div class="act-card-row"><span>${ICONS.coin} <span>${tBi('In', '')}</span></span><span class="val val-in">${fmt(gms.totalInputTokens)}</span></div>
+                <div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Out', '')}</span></span><span class="val val-out">${fmt(gms.totalOutputTokens)}</span></div>
+                ${'totalThinkingTokens' in gms && gms.totalThinkingTokens > 0 ? `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Think', '')}</span></span><span class="val val-out">${fmt(gms.totalThinkingTokens)}</span></div>` : ''}
+                ${gms.totalCacheRead > 0 ? `<div class="act-card-row"><span>${ICONS.save} <span>${tBi('Cache', '')}</span></span><span class="val val-cache">${fmt(gms.totalCacheRead)}</span></div>` : ''}
+                ${gms.totalCredits > 0 ? `<div class="act-card-row"><span>${ICONS.coin} <span>${tBi('Credits', '')}</span></span><span class="val val-credits">${gms.totalCredits.toFixed(1)} <span class="act-credit-calls">(${gms.creditCallCount || 0}${tBi('x', '')})</span></span></div>` : ''}
+                ${(() => { const pr = findPricing(gms.responseModel) || findPricing(name); if (!pr) { return ''; } const cost = (gms.totalInputTokens * pr.input + gms.totalOutputTokens * pr.output + gms.totalCacheRead * pr.cacheRead + gms.totalThinkingTokens * pr.thinking) / 1_000_000; if (cost <= 0) { return ''; } const costStr = cost < 0.01 ? cost.toFixed(4) : cost < 1 ? cost.toFixed(3) : cost.toFixed(2); return `<div class="act-card-row act-card-row-cost"><span>${ICONS.coin} <span>${tBi('Cost', '')}</span></span><span class="val val-cost">$${costStr}</span></div>`; })()}
+                ${gms.cacheHitRate > 0 ? `<div class="act-card-row"><span>${ICONS.bar} <span>${tBi('Cache Hit', '')}</span></span><span class="val val-hit">${(gms.cacheHitRate * 100).toFixed(0)}%</span></div>` : ''}
                 ${buildAccountSection(name)}
             </div>
             <div class="act-card-footer">
-                <span class="act-tool-tag">${tBi('Cache', '缓存')} ${(gms.cacheHitRate * 100).toFixed(0)}%</span>
+                <span class="act-tool-tag">${tBi('Cache', '')} ${(gms.cacheHitRate * 100).toFixed(0)}%</span>
             </div>
         </div>`;
     }
@@ -2496,7 +2496,7 @@ function buildTimeline(s: ActivitySummary, currentUsage?: ContextUsage | null, g
     const orderedEvents = [...scopedEvents];
     if (orderedEvents.length === 0) {
         if (!currentCascadeId) { return ''; }
-        return `<h2 class="act-section-title"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${tBi('Recent Activity', '最近操作')}</h2><p class="empty-msg">${tBi('No recent activity for the current conversation yet.', '当前对话暂时还没有可显示的最近操作。')}</p>`;
+        return `<h2 class="act-section-title"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${tBi('Recent Activity', '')}</h2><p class="empty-msg">${tBi('No recent activity for the current conversation yet.', '。')}</p>`;
     }
 
     const fmtTok = (n: number) => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
@@ -2544,20 +2544,20 @@ function buildTimeline(s: ActivitySummary, currentUsage?: ContextUsage | null, g
     const helpPopup = `<div class="act-tl-help-wrap">
         <span class="act-tl-help-btn">?</span>
         <div class="act-tl-help-popup">
-            <div class="act-tl-help-group-label">${tBi('Step Basics', '步骤基础')}</div>
-            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-time" style="display:inline">08:20</span></div><div class="act-tl-help-desc">${tBi('Timestamp', '步骤时间')}</div></div>
-            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-step-idx" style="display:inline">#115</span></div><div class="act-tl-help-desc">${tBi('Step index', '步骤索引')}</div></div>
+            <div class="act-tl-help-group-label">${tBi('Step Basics', '')}</div>
+            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-time" style="display:inline">08:20</span></div><div class="act-tl-help-desc">${tBi('Timestamp', '')}</div></div>
+            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-step-idx" style="display:inline">#115</span></div><div class="act-tl-help-desc">${tBi('Step index', '')}</div></div>
             <div class="act-tl-help-divider"></div>
-            <div class="act-tl-help-group-label">${tBi('Token Metrics', 'Token 指标')}</div>
-            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-cache" style="display:inline">176k ${tBi('cache', '缓存')}</span></div><div class="act-tl-help-desc">${tBi('Cache read', '缓存读取')}</div></div>
-            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-in" style="display:inline">1.3k ${tBi('in', '输入')}</span></div><div class="act-tl-help-desc">${tBi('Input tokens', '输入 token')}</div></div>
-            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-out" style="display:inline">117 ${tBi('out', '输出')}</span></div><div class="act-tl-help-desc">${tBi('Output tokens', '输出 token')}</div></div>
-            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-ctx" style="display:inline">${tBi('Ctx 142k', '上下文 142k')}</span></div><div class="act-tl-help-desc">${tBi('Context window size', '上下文窗口大小')}</div></div>
-            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-credit" style="display:inline">9 ${tBi('credits', '积分')}</span></div><div class="act-tl-help-desc">${tBi('Credits', '积分')}</div></div>
+            <div class="act-tl-help-group-label">${tBi('Token Metrics', 'Token ')}</div>
+            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-cache" style="display:inline">176k ${tBi('cache', '')}</span></div><div class="act-tl-help-desc">${tBi('Cache read', '')}</div></div>
+            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-in" style="display:inline">1.3k ${tBi('in', '')}</span></div><div class="act-tl-help-desc">${tBi('Input tokens', ' token')}</div></div>
+            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-out" style="display:inline">117 ${tBi('out', '')}</span></div><div class="act-tl-help-desc">${tBi('Output tokens', ' token')}</div></div>
+            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-ctx" style="display:inline">${tBi('Ctx 142k', ' 142k')}</span></div><div class="act-tl-help-desc">${tBi('Context window size', '')}</div></div>
+            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-credit" style="display:inline">9 ${tBi('credits', '')}</span></div><div class="act-tl-help-desc">${tBi('Credits', '')}</div></div>
             <div class="act-tl-help-divider"></div>
-            <div class="act-tl-help-group-label">${tBi('Performance', '性能')}</div>
-            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-ttft" style="display:inline">TTFT 2.1s</span></div><div class="act-tl-help-desc">${tBi('Time to first token', '首 token 延迟')}</div></div>
-            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-dur" style="display:inline">538ms</span></div><div class="act-tl-help-desc">${tBi('Duration', '耗时')}</div></div>
+            <div class="act-tl-help-group-label">${tBi('Performance', '')}</div>
+            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-gm-tag act-tl-gm-ttft" style="display:inline">TTFT 2.1s</span></div><div class="act-tl-help-desc">${tBi('Time to first token', ' token ')}</div></div>
+            <div class="act-tl-help-row"><div class="act-tl-help-sample"><span class="act-tl-dur" style="display:inline">538ms</span></div><div class="act-tl-help-desc">${tBi('Duration', '')}</div></div>
         </div>
     </div>`;
 
@@ -2567,7 +2567,7 @@ function buildTimeline(s: ActivitySummary, currentUsage?: ContextUsage | null, g
         checkpointHtml = buildContextIntelViewer(gm);
     }
 
-    let html = `<h2 class="act-section-title" style="display:flex;align-items:center;gap:var(--space-2)"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${tBi('Recent Activity', '最近操作')}${scopeBadge}${helpPopup}</h2>
+    let html = `<h2 class="act-section-title" style="display:flex;align-items:center;gap:var(--space-2)"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${tBi('Recent Activity', '')}${scopeBadge}${helpPopup}</h2>
     ${checkpointHtml}
     <div class="act-timeline">`;
 
@@ -2617,13 +2617,13 @@ function buildTimeline(s: ActivitySummary, currentUsage?: ContextUsage | null, g
                 }
             }
             // 2. Cache read tokens
-            if (e.gmCacheReadTokens && e.gmCacheReadTokens > 0) { tokenParts.push(`<span class="act-tl-gm-tag act-tl-gm-cache">${fmtTok(e.gmCacheReadTokens)} ${tBi('cache', '缓存')}</span>`); }
+            if (e.gmCacheReadTokens && e.gmCacheReadTokens > 0) { tokenParts.push(`<span class="act-tl-gm-tag act-tl-gm-cache">${fmtTok(e.gmCacheReadTokens)} ${tBi('cache', '')}</span>`); }
             // 3. Input tokens
-            tokenParts.push(`<span class="act-tl-gm-tag act-tl-gm-in">${fmtTok(e.gmInputTokens)} ${tBi('in', '输入')}</span>`);
+            tokenParts.push(`<span class="act-tl-gm-tag act-tl-gm-in">${fmtTok(e.gmInputTokens)} ${tBi('in', '')}</span>`);
             // 4. Output tokens
-            if (e.gmOutputTokens) { tokenParts.push(`<span class="act-tl-gm-tag act-tl-gm-out">${fmtTok(e.gmOutputTokens)} ${tBi('out', '输出')}</span>`); }
+            if (e.gmOutputTokens) { tokenParts.push(`<span class="act-tl-gm-tag act-tl-gm-out">${fmtTok(e.gmOutputTokens)} ${tBi('out', '')}</span>`); }
             // 5. Context window (rightmost anchor)
-            if (e.gmContextTokensUsed) { tokenParts.push(`<span class="act-tl-gm-tag act-tl-gm-ctx">${tBi('Ctx', '上下文')} ${fmtTok(e.gmContextTokensUsed)}</span>`); }
+            if (e.gmContextTokensUsed) { tokenParts.push(`<span class="act-tl-gm-tag act-tl-gm-ctx">${tBi('Ctx', '')} ${fmtTok(e.gmContextTokensUsed)}</span>`); }
 
             const statusParts: string[] = [];
             // Order from right→left: duration, TTFT, tools, credits, error
@@ -2633,7 +2633,7 @@ function buildTimeline(s: ActivitySummary, currentUsage?: ContextUsage | null, g
             }
             // 2. Credits
             if (e.gmCredits && e.gmCredits > 0) {
-                statusParts.push(`<span class="act-tl-gm-tag act-tl-gm-credit">${e.gmCredits} ${tBi('credits', '积分')}</span>`);
+                statusParts.push(`<span class="act-tl-gm-tag act-tl-gm-credit">${e.gmCredits} ${tBi('credits', '')}</span>`);
             }
             // 3. Tools
             if (e.detail) {
@@ -2641,7 +2641,7 @@ function buildTimeline(s: ActivitySummary, currentUsage?: ContextUsage | null, g
                 if (toolMatch) {
                     const count = parseInt(toolMatch[1], 10);
                     if (count > 0) {
-                        statusParts.push(`<span class="act-tl-gm-tag act-tl-gm-tool"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>${count} ${tBi(count === 1 ? 'tool' : 'tools', '工具')}</span>`);
+                        statusParts.push(`<span class="act-tl-gm-tag act-tl-gm-tool"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>${count} ${tBi(count === 1 ? 'tool' : 'tools', '')}</span>`);
                     }
                 }
             }
@@ -2764,16 +2764,16 @@ function buildTimeline(s: ActivitySummary, currentUsage?: ContextUsage | null, g
         }
         // 2. Credits — occasional
         if (stats.totalCredits > 0) {
-            chips.push(`<span class="seg-chip seg-chip-credits">${stats.totalCredits.toFixed(1)} ${tBi('credits', '积分')}</span>`);
+            chips.push(`<span class="seg-chip seg-chip-credits">${stats.totalCredits.toFixed(1)} ${tBi('credits', '')}</span>`);
         }
         // 3. Tool calls — occasional
         if (stats.toolNames > 0) {
-            chips.push(`<span class="seg-chip seg-chip-tools"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>${stats.toolNames} ${tBi('tools', '工具')}</span>`);
+            chips.push(`<span class="seg-chip seg-chip-tools"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>${stats.toolNames} ${tBi('tools', '')}</span>`);
         } else if (stats.toolCount > 0) {
             chips.push(`<span class="seg-chip seg-chip-tools"><svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>${stats.toolCount}</span>`);
         }
         // 4. Call count — almost always
-        if (stats.reasoningCount > 0) { chips.push(`<span class="seg-chip seg-chip-calls">${stats.reasoningCount} ${tBi('calls', '调用')}</span>`); }
+        if (stats.reasoningCount > 0) { chips.push(`<span class="seg-chip seg-chip-calls">${stats.reasoningCount} ${tBi('calls', '')}</span>`); }
         // 5. Cost — almost always (when pricing data exists)
         if (stats.totalCost > 0) {
             const costStr = stats.totalCost < 0.01 ? stats.totalCost.toFixed(3) : stats.totalCost.toFixed(2);
@@ -2781,23 +2781,23 @@ function buildTimeline(s: ActivitySummary, currentUsage?: ContextUsage | null, g
         }
         // 6. Cache read tokens — almost always
         if (stats.totalCache > 0) {
-            chips.push(`<span class="seg-chip seg-chip-cache">${fmtTok(stats.totalCache)} ${tBi('cache', '缓存')}</span>`);
+            chips.push(`<span class="seg-chip seg-chip-cache">${fmtTok(stats.totalCache)} ${tBi('cache', '')}</span>`);
         }
         // 6. Input / Output tokens — almost always
         if (stats.totalIn > 0 || stats.totalOut > 0) {
-            chips.push(`<span class="seg-chip seg-chip-tok">${fmtTok(stats.totalIn)} ${tBi('in', '输入')} / ${fmtTok(stats.totalOut)} ${tBi('out', '输出')}</span>`);
+            chips.push(`<span class="seg-chip seg-chip-tok">${fmtTok(stats.totalIn)} ${tBi('in', '')} / ${fmtTok(stats.totalOut)} ${tBi('out', '')}</span>`);
         }
         // 7. Context window size — rightmost anchor
         if (stats.lastContextTokens > 0) {
-            chips.push(`<span class="seg-chip seg-chip-ctx">${tBi('Ctx', '上下文')} ${fmtTok(stats.lastContextTokens)}</span>`);
+            chips.push(`<span class="seg-chip seg-chip-ctx">${tBi('Ctx', '')} ${fmtTok(stats.lastContextTokens)}</span>`);
         }
         const chipsHtml = chips.length > 0 ? `<span class="seg-chips">${chips.join('')}</span>` : '';
 
         // Turn number label for the segment header (1-indexed, chronological order)
         const turnNumber = segments.length - si;
         const turnLabel = segment.user
-            ? `${tBi('Turn', '第')} ${turnNumber}${tBi('', ' 轮')}`
-            : tBi('AI actions (no user anchor)', 'AI 动作（缺少用户锚点）');
+            ? `${tBi('Turn', '')} ${turnNumber}${tBi('', ' ')}`
+            : tBi('AI actions (no user anchor)', 'AI （）');
 
         html += `<details class="act-tl-turn" id="turn-${si}"${isLatest ? ' open' : ''}>`;
         html += `<summary class="act-tl-turn-header">`;
@@ -2835,10 +2835,10 @@ function buildPerformanceChart(s: GMSummary): string {
     const entries = Object.entries(s.modelBreakdown).filter(([, ms]) => ms.avgTTFT > 0);
     if (entries.length === 0) { return ''; }
     const fmtSec = (n: number) => n <= 0 ? '-' : `${n.toFixed(2)}s`;
-    let html = `<h2 class="act-section-title">${tBi('Performance Baseline', '性能基线')}</h2><div class="gm-perf-grid">`;
+    let html = `<h2 class="act-section-title">${tBi('Performance Baseline', '')}</h2><div class="gm-perf-grid">`;
     for (const [name, ms] of entries) {
-        html += `<div class="gm-perf-item"><span class="gm-perf-label">${esc(name)}</span><span class="gm-perf-val">${fmtSec(ms.avgTTFT)}</span><span class="gm-perf-sub">${tBi('TTFT avg', 'TTFT 均值')} (${fmtSec(ms.minTTFT)}–${fmtSec(ms.maxTTFT)})</span></div>`;
-        html += `<div class="gm-perf-item"><span class="gm-perf-label">${esc(name)} ${tBi('Stream', '流速')}</span><span class="gm-perf-val">${fmtSec(ms.avgStreaming)}</span><span class="gm-perf-sub">${ms.callCount} ${tBi('samples', '样本')}</span></div>`;
+        html += `<div class="gm-perf-item"><span class="gm-perf-label">${esc(name)}</span><span class="gm-perf-val">${fmtSec(ms.avgTTFT)}</span><span class="gm-perf-sub">${tBi('TTFT avg', 'TTFT ')} (${fmtSec(ms.minTTFT)}–${fmtSec(ms.maxTTFT)})</span></div>`;
+        html += `<div class="gm-perf-item"><span class="gm-perf-label">${esc(name)} ${tBi('Stream', '')}</span><span class="gm-perf-val">${fmtSec(ms.avgStreaming)}</span><span class="gm-perf-sub">${ms.callCount} ${tBi('samples', '')}</span></div>`;
     }
     html += `</div>`;
     return html;
@@ -2848,11 +2848,11 @@ function buildCacheEfficiency(s: GMSummary): string {
     const entries = Object.entries(s.modelBreakdown).filter(([, ms]) => ms.totalInputTokens > 0);
     if (entries.length === 0) { return ''; }
     const fmt = (n: number) => n >= 1_000_000 ? (n / 1_000_000).toFixed(2) + 'M' : n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
-    let html = `<h2 class="act-section-title">${tBi('Cache Efficiency', '缓存效率')}</h2>`;
+    let html = `<h2 class="act-section-title">${tBi('Cache Efficiency', '')}</h2>`;
     for (const [name, ms] of entries) {
         const ratio = ms.totalInputTokens > 0 ? ms.totalCacheRead / ms.totalInputTokens : 0;
         const pct = Math.min(ratio * 10, 100);
-        html += `<div style="margin-bottom:var(--space-3)"><div style="display:flex;justify-content:space-between;font-size:0.85em;margin-bottom:var(--space-1)"><span>${esc(name)}</span><span style="color:var(--color-info);font-weight:600">${ratio.toFixed(1)}× ${tBi('cache ratio', '缓存倍率')}</span></div><div class="gm-cache-bar-bg"><div class="gm-cache-bar" style="width:${pct.toFixed(1)}%"></div></div><div style="display:flex;justify-content:space-between;font-size:0.75em;color:var(--color-text-dim)"><span>${tBi('Input', '输入')}: ${fmt(ms.totalInputTokens)}</span><span>${tBi('Cache Read', '缓存读取')}: ${fmt(ms.totalCacheRead)}</span></div></div>`;
+        html += `<div style="margin-bottom:var(--space-3)"><div style="display:flex;justify-content:space-between;font-size:0.85em;margin-bottom:var(--space-1)"><span>${esc(name)}</span><span style="color:var(--color-info);font-weight:600">${ratio.toFixed(1)}× ${tBi('cache ratio', '')}</span></div><div class="gm-cache-bar-bg"><div class="gm-cache-bar" style="width:${pct.toFixed(1)}%"></div></div><div style="display:flex;justify-content:space-between;font-size:0.75em;color:var(--color-text-dim)"><span>${tBi('Input', '')}: ${fmt(ms.totalInputTokens)}</span><span>${tBi('Cache Read', '')}: ${fmt(ms.totalCacheRead)}</span></div></div>`;
     }
     return html;
 }
@@ -2868,7 +2868,7 @@ function buildContextGrowth(s: GMSummary): string {
     const yScale = (v: number) => H - PAD - ((v / maxTok) * (H - PAD * 2));
     const points = data.map((d, i) => `${PAD + i * xStep},${yScale(d.tokens)}`).join(' ');
     const areaPoints = `${PAD},${H - PAD} ${points} ${PAD + (data.length - 1) * xStep},${H - PAD}`;
-    return `<h2 class="act-section-title">${tBi('Context Growth', '上下文增长')} <span class="act-badge">${tBi('Per-Call', '每次调用')}</span></h2><div class="act-trend-container"><svg class="act-trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="gmTrendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f97316" stop-opacity="0.5"/><stop offset="100%" stop-color="#f97316" stop-opacity="0.1"/></linearGradient></defs><polygon points="${areaPoints}" fill="url(#gmTrendFill)"/><polyline points="${points}" fill="none" stroke="#fb923c" stroke-width="2" stroke-linejoin="round"/></svg><div class="act-trend-labels"><span>${fmt(data[0].tokens)}</span><span>${data.length} ${tBi('calls', '调用')}</span><span>${fmt(data[data.length - 1].tokens)}</span></div></div>`;
+    return `<h2 class="act-section-title">${tBi('Context Growth', '')} <span class="act-badge">${tBi('Per-Call', '')}</span></h2><div class="act-trend-container"><svg class="act-trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="gmTrendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f97316" stop-opacity="0.5"/><stop offset="100%" stop-color="#f97316" stop-opacity="0.1"/></linearGradient></defs><polygon points="${areaPoints}" fill="url(#gmTrendFill)"/><polyline points="${points}" fill="none" stroke="#fb923c" stroke-width="2" stroke-linejoin="round"/></svg><div class="act-trend-labels"><span>${fmt(data[0].tokens)}</span><span>${data.length} ${tBi('calls', '')}</span><span>${fmt(data[data.length - 1].tokens)}</span></div></div>`;
 }
 
 function buildConversations(s: GMSummary): string {
@@ -2889,7 +2889,7 @@ function buildConversations(s: GMSummary): string {
     const iconClock = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
     const iconCalls = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
 
-    let html = `<h2 class="act-section-title">${tBi('Conversations', '对话分布')}</h2><div class="act-conv-list">`;
+    let html = `<h2 class="act-section-title">${tBi('Conversations', '')}</h2><div class="act-conv-list">`;
     for (const c of convs) {
         let totalCredits = 0;
         let earliest = '';
@@ -2907,7 +2907,7 @@ function buildConversations(s: GMSummary): string {
             : '';
         const acctCredits = c.accountCredits ?? 0;
         const creditsChip = totalCredits > 0
-            ? `<span class="act-conv-meta-chip act-conv-credits"><b>${totalCredits}</b> ${tBi('credits', '积分')}${acctCredits > 0 && acctCredits < totalCredits ? ` <span class="act-credit-calls">+${acctCredits}</span>` : ''}</span>`
+            ? `<span class="act-conv-meta-chip act-conv-credits"><b>${totalCredits}</b> ${tBi('credits', '')}${acctCredits > 0 && acctCredits < totalCredits ? ` <span class="act-credit-calls">+${acctCredits}</span>` : ''}</span>`
             : '';
 
         html += `<div class="act-conv-item" title="${esc(c.cascadeId)}">
@@ -2957,7 +2957,7 @@ function buildToolCallRanking(gm: GMSummary, currentCascadeId?: string): string 
     }).join('');
 
     const convNote = convCount > 1
-        ? `<span>${tBi(`${convCount} conversations`, `${convCount} 个对话`)}</span>`
+        ? `<span>${tBi(`${convCount} conversations`, `${convCount} `)}</span>`
         : '';
 
     // ── Tool Catalog: persistent inventory of all unique tools used ──
@@ -3256,17 +3256,17 @@ function buildContextIntelViewer(s: GMSummary): string {
         context_injection: {
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
             color: '#60a5fa',
-            label: tBi('Context Injection', '上下文注入'),
+            label: tBi('Context Injection', ''),
         },
         user_info: {
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
             color: '#4ade80',
-            label: tBi('User Information', '用户信息'),
+            label: tBi('User Information', ''),
         },
         user_rules: {
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
             color: '#06b6d4',
-            label: tBi('User Rules', '用户规则'),
+            label: tBi('User Rules', ''),
         },
         mcp_servers: {
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>',
@@ -3276,7 +3276,7 @@ function buildContextIntelViewer(s: GMSummary): string {
         workflows: {
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
             color: '#f472b6',
-            label: tBi('Workflows', '工作流'),
+            label: tBi('Workflows', ''),
         },
         artifacts: {
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
@@ -3291,7 +3291,7 @@ function buildContextIntelViewer(s: GMSummary): string {
         system_preamble: {
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
             color: '#94a3b8',
-            label: tBi('System Preamble', '系统前导'),
+            label: tBi('System Preamble', ''),
         },
     };
 
@@ -3303,7 +3303,7 @@ function buildContextIntelViewer(s: GMSummary): string {
         const rawContentStyle = `white-space: pre-wrap; word-break: break-word; font-family: var(--vscode-editor-font-family); font-size: 0.9em; opacity: 0.9; line-height: 1.5;`;
 
         if (item.type === 'user_rules') {
-            const rawHeader = tBi('ORIGINAL USER PROMPT', '原始用户提示词');
+            const rawHeader = tBi('ORIGINAL USER PROMPT', '');
             bodyHtml = `<div style="margin-bottom: 10px; border-bottom: 1px dashed var(--ci-color); padding-bottom: 6px; font-weight: 600; opacity: 0.8; font-size: 0.85em; letter-spacing: 0.5px;">${rawHeader}</div><div style="${rawContentStyle}">${bodyHtml}</div>`;
         } else {
             bodyHtml = `<div style="${rawContentStyle}">${bodyHtml}</div>`;
@@ -3354,9 +3354,9 @@ function buildContextIntelViewer(s: GMSummary): string {
             dnaCards.push(`<details class="cp-card" id="ciDna-sp-${esc(modelName)}" data-ci-type="dna_prompt" style="--ci-color:#60a5fa">
                 <summary class="cp-card-header">
                     <span class="ci-icon" style="color:var(--ci-color);width:14px;height:14px;display:inline-flex;flex-shrink:0">${promptIcon}</span>
-                    <span style="font-weight:600;color:var(--ci-color)">${tBi('System Prompt Structure', '系统提示词结构')}</span>
-                    <span class="cp-card-chip cp-card-chip-tok">${ms.promptSectionTitles.length} ${tBi('sections', '区段')}</span>
-                    ${ms.toolCount > 0 ? `<span class="cp-card-chip cp-card-chip-step">${ms.toolCount} ${tBi('tools', '工具')}</span>` : ''}
+                    <span style="font-weight:600;color:var(--ci-color)">${tBi('System Prompt Structure', '')}</span>
+                    <span class="cp-card-chip cp-card-chip-tok">${ms.promptSectionTitles.length} ${tBi('sections', '')}</span>
+                    ${ms.toolCount > 0 ? `<span class="cp-card-chip cp-card-chip-step">${ms.toolCount} ${tBi('tools', '')}</span>` : ''}
                 </summary>
                 <div class="cp-card-body" style="white-space:normal">
                     <div style="margin-bottom:8px;font-size:0.88em;color:var(--color-text-dim)">${esc(modelName)}</div>
@@ -3415,20 +3415,20 @@ function buildContextIntelViewer(s: GMSummary): string {
                 capacityHtml = `
                     <div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--color-divider)">
                         <div class="ci-cfg-row" style="margin-bottom:4px">
-                            <span class="ci-cfg-label">${tBi('Context Window', '上下文窗口')}</span>
+                            <span class="ci-cfg-label">${tBi('Context Window', '')}</span>
                             <span class="ci-cfg-val">${fmt(latestContextUsed)} / ${capLabel}</span>
                         </div>
                         <div style="height:6px;background:var(--color-surface-hover);border-radius:3px;overflow:hidden">
                             <div style="height:100%;width:${usagePct}%;background:${barColor};border-radius:3px;transition:width 0.3s"></div>
                         </div>
-                        <div style="font-size:0.78em;color:var(--color-text-dim);margin-top:3px">${usagePct}% ${tBi('used', '已使用')} · ${tBi('peak', '峰值')} ${fmt(maxContextSeen)}</div>
+                        <div style="font-size:0.78em;color:var(--color-text-dim);margin-top:3px">${usagePct}% ${tBi('used', '')} · ${tBi('peak', '')} ${fmt(maxContextSeen)}</div>
                     </div>`;
             }
 
             dnaCards.push(`<details class="cp-card" id="ciDna-cc-${esc(modelName)}" data-ci-type="dna_config" style="--ci-color:#f59e0b">
                 <summary class="cp-card-header">
                     <span class="ci-icon" style="color:var(--ci-color);width:14px;height:14px;display:inline-flex;flex-shrink:0">${configIcon}</span>
-                    <span style="font-weight:600;color:var(--ci-color)">${tBi('Generation Config', '生成配置')}</span>
+                    <span style="font-weight:600;color:var(--ci-color)">${tBi('Generation Config', '')}</span>
                     <span class="cp-card-chip cp-card-chip-tok">T=${cc.temperature}</span>
                     ${latestContextUsed > 0 ? `<span class="cp-card-chip cp-card-chip-step">${fmt(latestContextUsed)} ctx</span>` : ''}
                 </summary>
@@ -3473,11 +3473,11 @@ function buildContextIntelViewer(s: GMSummary): string {
         dnaCards.push(`<details class="cp-card" id="ciDna-tb" data-ci-type="dna_tokens" style="--ci-color:#f97316">
             <summary class="cp-card-header">
                 <span class="ci-icon" style="color:var(--ci-color);width:14px;height:14px;display:inline-flex;flex-shrink:0">${breakdownIcon}</span>
-                <span style="font-weight:600;color:var(--ci-color)">${tBi('Token Composition', 'Token 组成')}</span>
+                <span style="font-weight:600;color:var(--ci-color)">${tBi('Token Composition', 'Token ')}</span>
                 <span class="cp-card-chip cp-card-chip-tok">${fmt(total)} total</span>
             </summary>
             <div class="cp-card-body" style="white-space:normal">
-                <div style="font-size:0.82em;color:var(--color-text-dim);margin-bottom:8px">${tBi('Latest snapshot of context window token distribution', '上下文窗口 token 分布最新快照')}</div>
+                <div style="font-size:0.82em;color:var(--color-text-dim);margin-bottom:8px">${tBi('Latest snapshot of context window token distribution', ' token ')}</div>
                 ${breakdownRows}
             </div>
         </details>`);
@@ -3490,10 +3490,10 @@ function buildContextIntelViewer(s: GMSummary): string {
     if (!allCards) {
         const emptyIcon = `<svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
         return `<details class="ci-section" id="ciSection">
-        <summary class="ci-section-header">${emptyIcon}${tBi('Context Intelligence', '上下文情报')}</summary>
+        <summary class="ci-section-header">${emptyIcon}${tBi('Context Intelligence', '')}</summary>
         <div class="cp-viewer"><div style="text-align:center;padding:var(--space-4);color:var(--color-text-dim);font-size:0.85em">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:28px;height:28px;margin:0 auto 8px;display:block;opacity:0.4"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-            ${tBi('Waiting for AI response — context data will populate automatically after the first model call in this session.', '等待 AI 回复中 — 上下文数据将在本次会话的首次模型调用后自动填充。')}
+            ${tBi('Waiting for AI response — context data will populate automatically after the first model call in this session.', ' AI  — 。')}
         </div></div>
         </details>`;
     }
@@ -3511,13 +3511,13 @@ function buildContextIntelViewer(s: GMSummary): string {
     // Add DNA badges
     if (dnaCards.length > 0) {
         const dnaColor = '#f59e0b';
-        badgeParts.push(`<span class="act-badge" style="background:${dnaColor}22;color:${dnaColor};border:1px solid ${dnaColor}44">${tBi('Model DNA', '模型 DNA')}${dnaCards.length > 1 ? ' ' + dnaCards.length : ''}</span>`);
+        badgeParts.push(`<span class="act-badge" style="background:${dnaColor}22;color:${dnaColor};border:1px solid ${dnaColor}44">${tBi('Model DNA', ' DNA')}${dnaCards.length > 1 ? ' ' + dnaCards.length : ''}</span>`);
     }
 
     const titleIcon = `<svg class="act-icon" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
 
     return `<details class="ci-section" id="ciSection">
-    <summary class="ci-section-header">${titleIcon}${tBi('Context Intelligence', '上下文情报')} <span class="ci-badges">${badgeParts.join(' ')}</span></summary>
+    <summary class="ci-section-header">${titleIcon}${tBi('Context Intelligence', '')} <span class="ci-badges">${badgeParts.join(' ')}</span></summary>
     <div class="cp-viewer">${allCards}</div>
     </details>`;
 }
@@ -3663,21 +3663,21 @@ function buildLedgerSettledPanel(entries: LedgerSettledEntry[]): string {
     return `<div class="pending-archive-panel settled-panel">
         <div class="pending-archive-header settled-header">
             ${settledIcon}
-            ${tBi('Settled (Quota Reset)', '已结算 (额度重置)')}
-            <span class="pending-archive-count">${entries.length} ${tBi('cycle(s)', '个周期')}</span>
+            ${tBi('Settled (Quota Reset)', ' ()')}
+            <span class="pending-archive-count">${entries.length} ${tBi('cycle(s)', '')}</span>
         </div>
         <div class="pending-archive-stats">
-            <span class="pending-stat">${tBi('Calls', '调用')} <b>${totalCalls}</b></span>
-            <span class="pending-stat">${tBi('Input', '输入')} <b>${formatK(totalIn)}</b></span>
-            <span class="pending-stat">${tBi('Output', '输出')} <b>${formatK(totalOut)}</b></span>
-            ${totalCache > 0 ? `<span class="pending-stat">${tBi('Cache', '缓存')} <b>${formatK(totalCache)}</b></span>` : ''}
-            ${totalCredits > 0 ? `<span class="pending-stat">${tBi('Credits', '积分')} <b>${totalCredits}</b></span>` : ''}
-            ${totalCost > 0 ? `<span class="pending-stat pending-stat-cost">${tBi('Cost', '费用')} <b>$${totalCost < 0.01 ? totalCost.toFixed(4) : totalCost < 1 ? totalCost.toFixed(3) : totalCost.toFixed(2)}</b></span>` : ''}
+            <span class="pending-stat">${tBi('Calls', '')} <b>${totalCalls}</b></span>
+            <span class="pending-stat">${tBi('Input', '')} <b>${formatK(totalIn)}</b></span>
+            <span class="pending-stat">${tBi('Output', '')} <b>${formatK(totalOut)}</b></span>
+            ${totalCache > 0 ? `<span class="pending-stat">${tBi('Cache', '')} <b>${formatK(totalCache)}</b></span>` : ''}
+            ${totalCredits > 0 ? `<span class="pending-stat">${tBi('Credits', '')} <b>${totalCredits}</b></span>` : ''}
+            ${totalCost > 0 ? `<span class="pending-stat pending-stat-cost">${tBi('Cost', '')} <b>$${totalCost < 0.01 ? totalCost.toFixed(4) : totalCost < 1 ? totalCost.toFixed(3) : totalCost.toFixed(2)}</b></span>` : ''}
         </div>
         <div class="pending-archive-models">${modelChips}</div>
         <div class="pending-archive-note">${tBi(
         'Settled by quota reset. Will be archived to the calendar at midnight.',
-        '已在额度重置后结算，将于午夜归档到日历。',
+        '，。',
     )}</div>
     </div>`;
 }
@@ -3740,21 +3740,21 @@ export function buildAccountStatusPanel(snapshots: AccountSnapshot[], billingDay
                 const buildQuotaBar = (pct: number | undefined): string => {
                     const p = pct ?? 100;
                     const colorClass = p > 40 ? 'acct-quota-ok' : p > 20 ? 'acct-quota-warn' : 'acct-quota-danger';
-                    return `<div class="acct-quota-bar" title="${p}% ${tBi('remaining', '剩余')}"><div class="acct-quota-fill ${colorClass}" style="width:${p}%"></div></div>`;
+                    return `<div class="acct-quota-bar" title="${p}% ${tBi('remaining', '')}"><div class="acct-quota-fill ${colorClass}" style="width:${p}%"></div></div>`;
                 };
 
-                // Pool has no usage — show "未使用" instead of fake countdown
+                // Pool has no usage — show "" instead of fake countdown
                 if (pool.hasUsage === false) {
                     return `<div class="acct-pool-row acct-pool-idle">
                         <div class="acct-pool-models">${modelChips}${extraChip}</div>
-                        <span class="acct-reset-countdown acct-reset-idle">${tBi('Idle', '未使用')}</span>
+                        <span class="acct-reset-countdown acct-reset-idle">${tBi('Idle', '')}</span>
                     </div>`;
                 }
 
                 if (diffMs <= 0) {
                     return `<div class="acct-pool-row">
                         <div class="acct-pool-models">${modelChips}${extraChip}</div>
-                        <span class="acct-reset-countdown acct-reset-countdown-expired">${tBi('Ready', '已就绪')}</span>
+                        <span class="acct-reset-countdown acct-reset-countdown-expired">${tBi('Ready', '')}</span>
                     </div>`;
                 }
 
@@ -3772,17 +3772,17 @@ export function buildAccountStatusPanel(snapshots: AccountSnapshot[], billingDay
             resetHtml = `<div class="acct-pools">${poolRows}</div>`;
         } else if (!snap.isActive) {
             resetHtml = `<div class="acct-reset">
-                <span class="acct-tag-cached">${tBi('cached', '已缓存')}</span>
+                <span class="acct-tag-cached">${tBi('cached', '')}</span>
             </div>`;
         }
 
         const statusTag = snap.isActive
-            ? `<span class="acct-tag-active">${tBi('active', '在线')}</span>`
-            : `<span class="acct-tag-cached">${tBi('cached', '已缓存')}</span>`;
+            ? `<span class="acct-tag-active">${tBi('active', '')}</span>`
+            : `<span class="acct-tag-cached">${tBi('cached', '')}</span>`;
 
         // Delete link for cached accounts — inline red text after status tag
         const deleteLink = !snap.isActive
-            ? `<button class="acct-delete-link acct-delete-btn" data-email="${esc(snap.email)}" title="${tBi('Remove cached account', '移除缓存账号')}">${tBi('Remove', '移除')}</button>`
+            ? `<button class="acct-delete-link acct-delete-btn" data-email="${esc(snap.email)}" title="${tBi('Remove cached account', '')}">${tBi('Remove', '')}</button>`
             : '';
 
         // Build credits chips (e.g. "GOOGLE AI 18,590")
@@ -3801,9 +3801,9 @@ export function buildAccountStatusPanel(snapshots: AccountSnapshot[], billingDay
         if (billingDay >= 1 && billingDay <= 31) {
             const daysLeft = getDaysUntilBillingDay(billingDay) ?? 0;
             if (daysLeft === 0) {
-                expiryChip = `<span class="acct-credit-chip acct-expiry-chip" style="background:rgba(239,68,68,0.15);color:#f87171">${tBi('Expires today', '今日到期')}</span>`;
+                expiryChip = `<span class="acct-credit-chip acct-expiry-chip" style="background:rgba(239,68,68,0.15);color:#f87171">${tBi('Expires today', '')}</span>`;
             } else {
-                expiryChip = `<span class="acct-credit-chip acct-expiry-chip">${daysLeft}${tBi('d until expiry', '天后到期')}</span>`;
+                expiryChip = `<span class="acct-credit-chip acct-expiry-chip">${daysLeft}${tBi('d until expiry', '')}</span>`;
             }
         }
         const expiryRow = expiryChip ? `<div class="acct-credits">${expiryChip}</div>` : '';
@@ -3827,7 +3827,7 @@ export function buildAccountStatusPanel(snapshots: AccountSnapshot[], billingDay
     return `<div class="acct-panel">
         <div class="acct-panel-header">
             ${userIcon}
-            ${tBi('Account Status', '账号状态')}
+            ${tBi('Account Status', '')}
             <span class="acct-panel-count">(${sorted.length})</span>
         </div>
         ${cards}

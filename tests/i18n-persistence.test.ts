@@ -101,16 +101,16 @@ describe('i18n DurableState persistence', () => {
         expect(fs.existsSync(filePath) && fs.readFileSync(filePath, 'utf8').includes('en')).toBe(false);
     });
 
-    it('defaults to both when the DurableState file is missing', async () => {
+    it('defaults to English when the DurableState file is missing', async () => {
         const state = new DurableState(statePath('missing.json'));
 
         await setLanguage('en', makeContext());
         initI18nFromState(state.globalBucket());
 
-        expect(getLanguage()).toBe('both');
+        expect(getLanguage()).toBe('en');
     });
 
-    it('defaults to both without throwing for malformed JSON', async () => {
+    it('defaults to English without throwing for malformed JSON', async () => {
         const filePath = statePath('malformed.json');
         fs.writeFileSync(filePath, '{not json', 'utf8');
 
@@ -118,10 +118,10 @@ describe('i18n DurableState persistence', () => {
 
         await setLanguage('en', makeContext());
         expect(() => initI18nFromState(state.globalBucket())).not.toThrow();
-        expect(getLanguage()).toBe('both');
+        expect(getLanguage()).toBe('en');
     });
 
-    it('defaults to both for unsupported DurableState versions', async () => {
+    it('defaults to English for unsupported DurableState versions', async () => {
         const filePath = statePath('unsupported-version.json');
         fs.writeFileSync(filePath, JSON.stringify({
             version: 2,
@@ -134,13 +134,13 @@ describe('i18n DurableState persistence', () => {
         await setLanguage('en', makeContext());
         initI18nFromState(state.globalBucket());
 
-        expect(getLanguage()).toBe('both');
+        expect(getLanguage()).toBe('en');
     });
 
-    it('recognizes only supported language values', () => {
-        expect(isLanguage('zh')).toBe(true);
+    it('recognizes English as the only supported display language', () => {
+        expect(isLanguage('zh')).toBe(false);
         expect(isLanguage('en')).toBe(true);
-        expect(isLanguage('both')).toBe(true);
+        expect(isLanguage('both')).toBe(false);
         expect(isLanguage('xx')).toBe(false);
         expect(isLanguage('')).toBe(false);
         expect(isLanguage(null)).toBe(false);

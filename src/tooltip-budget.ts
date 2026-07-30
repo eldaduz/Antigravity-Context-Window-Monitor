@@ -231,18 +231,14 @@ export function isCtaLine(line: string): boolean {
     return line.includes(CTA_MARKER);
 }
 
-/** Quota section title: ⚡ Model Quota / 模型配额 (optionally with shown/total). */
+/** Quota section title. */
 export function isQuotaSectionTitle(line: string): boolean {
-    return line.includes('⚡')
-        && (/Model Quota/i.test(line) || /模型配额/.test(line));
+    return line.includes('⚡') && /Model Quota/i.test(line);
 }
 
-/** "… and N more models" / "… 还有 N 个模型" fold hint. */
+/** "… and N more models" fold hint. */
 export function isQuotaMoreLine(line: string): boolean {
-    if (/more models/i.test(line)) {
-        return true;
-    }
-    return /还有/.test(line) && /模型/.test(line);
+    return /more models/i.test(line);
 }
 
 function isMarkdownTableLine(line: string): boolean {
@@ -373,7 +369,7 @@ export function lineFoldPriority(line: string): number {
     if (/^🔔/.test(t) || /^⏳/.test(t)) {
         return 1;
     }
-    if (/AI Credits|AI 积分|Credits expire|积分到期/.test(t) || (/^⚡/.test(t) && !isQuotaSectionTitle(line))) {
+    if (/AI Credits|AI |Credits expire|/.test(t) || (/^⚡/.test(t) && !isQuotaSectionTitle(line))) {
         return 1;
     }
 
@@ -401,7 +397,7 @@ function isCompactFoldableExtra(line: string): boolean {
         return true;
     }
     // Usage % as its own line (compact merges into used/limit)
-    if (/^📊/.test(t) && !/Context Window|上下文窗口/.test(t)) {
+    if (/^📊/.test(t) && !/Context Window|/.test(t)) {
         return true;
     }
     // Model / session as separate lines — compact merges; keep one if needed via P0 tail-cut

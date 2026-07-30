@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { 
-    buildExpectedWorkspaceId, 
-    extractPid, 
-    extractCsrfToken, 
-    extractWorkspaceId, 
+import {
+    buildExpectedWorkspaceId,
+    extractPid,
+    extractCsrfToken,
+    extractWorkspaceId,
     filterLsProcessLines,
     extractPort,
     extractPortFromNetstat,
@@ -48,7 +48,7 @@ describe('discovery.ts', () => {
         });
 
         it('should handle percent-encoded CJK characters (Chinese folder names)', () => {
-            // 简历投递 encoded as %E7%AE%80%E5%8E%86%E6%8A%95%E9%80%92
+            //  encoded as %E7%AE%80%E5%8E%86%E6%8A%95%E9%80%92
             // The /% boundary produces adjacent _'s which must be collapsed
             const uri = 'file:///Users/yangjunjie/Desktop/%E7%AE%80%E5%8E%86%E6%8A%95%E9%80%92';
             expect(buildExpectedWorkspaceId(uri)).toBe(
@@ -57,7 +57,7 @@ describe('discovery.ts', () => {
         });
 
         it('should handle mixed space and CJK percent-encoded paths', () => {
-            // /linux do/简历 → /linux%20do/%E7%AE%80%E5%8E%86
+            // /linux do/ → /linux%20do/%E7%AE%80%E5%8E%86
             const uri = 'file:///Users/yangjunjie/Desktop/linux%20do/%E7%AE%80%E5%8E%86';
             expect(buildExpectedWorkspaceId(uri)).toBe(
                 'file_Users_yangjunjie_Desktop_linux_20do_E7_AE_80_E5_8E_86'
@@ -279,7 +279,7 @@ describe('discovery.ts', () => {
             });
 
             it('Windows: falls back when CJK workspace URI does not match LS workspace', () => {
-                // LS started for Chinese path "数据", Window opens for "antigravity"
+                // LS started for Chinese path "", Window opens for "antigravity"
                 const lsUri = 'file:///c:/Users/8bit/Desktop/%E6%95%B0%E6%8D%AE';
                 const lsId = buildExpectedWorkspaceId(lsUri);
                 const lines = [makeLine(lsId)];

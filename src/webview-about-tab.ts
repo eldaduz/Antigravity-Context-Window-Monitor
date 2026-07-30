@@ -48,70 +48,70 @@ function getFeatureCards(): FeatureCard[] {
             tabId: 'gmdata',
             icon: ABOUT_ICON.gmdata,
             color: 'var(--color-orange)',
-            title: tBi('GM Data', 'GM 数据'),
+            title: tBi('GM Data', 'GM '),
             description: tBi(
                 'Real-time model call analytics: per-call tokens, credits, cost, latency, error tracking, tool usage ranking, and context intelligence — all from Generator Metadata.',
-                '实时模型调用分析：逐次调用的 Token、积分、费用、延迟、错误追踪、工具使用排行、上下文情报 —— 全部来自 Generator Metadata。',
+                '： Token、、、、、、 ——  Generator Metadata。',
             ),
         },
         {
             tabId: 'chats',
             icon: ABOUT_ICON.chats,
             color: 'var(--color-teal-light)',
-            title: tBi('Sessions', '会话'),
+            title: tBi('Sessions', ''),
             description: tBi(
                 'Browse all conversations with the AI. Quick access to brain records, protobuf data, and workspace folders for each session.',
-                '浏览与 AI 的全部对话。快速访问每个会话的 Brain 记录、Protobuf 数据和工作区文件夹。',
+                ' AI 。 Brain 、Protobuf 。',
             ),
         },
         {
             tabId: 'pricing',
             icon: ABOUT_ICON.cost,
             color: 'var(--color-ok-light)',
-            title: tBi('Cost', '成本'),
+            title: tBi('Cost', ''),
             description: tBi(
                 'Estimated USD cost analysis per model, with monthly breakdown charts. Customize pricing per token type (input/output/cache/thinking).',
-                '按模型估算 USD 费用，含月度分项柱状图。可自定义每种 Token 类型（输入/输出/缓存/思考）的单价。',
+                ' USD ，。 Token （///）。',
             ),
         },
         {
             tabId: 'models',
             icon: ABOUT_ICON.models,
             color: 'var(--color-ok)',
-            title: tBi('Models', '模型'),
+            title: tBi('Models', ''),
             description: tBi(
                 'All available AI models and their configurations: quota pools, reset times, context limits, and thinking capabilities.',
-                '所有可用 AI 模型及其配置：额度池、重置时间、有效上下文限制、以及思考能力参数。',
+                ' AI ：、、、。',
             ),
         },
         {
             tabId: 'calendar',
             icon: ABOUT_ICON.calendar,
             color: 'var(--color-teal-light)',
-            title: tBi('Calendar', '日历'),
+            title: tBi('Calendar', ''),
             description: tBi(
                 'Daily usage archive with heat-map calendar view. Each day records total calls, tokens, credits, and archived cycles.',
-                '每日用量归档，热力图日历视图。每天记录总调用、Token、积分和归档周期。',
+                '，。、Token、。',
             ),
         },
         {
             tabId: 'profile',
             icon: ABOUT_ICON.profile,
             color: 'var(--color-muted)',
-            title: tBi('Profile', '个人'),
+            title: tBi('Profile', ''),
             description: tBi(
                 'Current account information, login status, and model API configuration details.',
-                '当前账户信息、登录状态和模型 API 配置详情。',
+                '、 API 。',
             ),
         },
         {
             tabId: 'settings',
             icon: ABOUT_ICON.settings,
             color: 'var(--color-muted)',
-            title: tBi('Settings', '设置'),
+            title: tBi('Settings', ''),
             description: tBi(
                 'Plugin preferences: polling interval, status bar toggles, quota warnings, storage diagnostics, and data management.',
-                '插件偏好：轮询间隔、状态栏开关、低额度警报、存储诊断和数据管理。',
+                '：、、、。',
             ),
         },
     ];
@@ -131,29 +131,29 @@ export function buildAboutTabContent(): string {
         <h2 class="about-hero-title">Antigravity Context Window Monitor</h2>
         <p class="about-hero-subtitle">${tBi(
         'An open-source community plugin for real-time monitoring and analytics of AI model usage in Antigravity.',
-        '一款开源社区插件，用于实时监控和分析 Antigravity 中 AI 模型的使用情况。',
+        '， Antigravity  AI 。',
     )}</p>
-        <div class="about-platform-chips" role="group" aria-label="${tBi('Supported platforms', '支持的平台')}">
-            <span class="about-platform-chip about-platform-active" role="status" aria-label="${tBi('IDE: actively supported', 'IDE：已支持')}">
+        <div class="about-platform-chips" role="group" aria-label="${tBi('Supported platforms', '')}">
+            <span class="about-platform-chip about-platform-active" role="status" aria-label="${tBi('IDE: actively supported', 'IDE：')}">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 IDE
             </span>
-            <span class="about-platform-chip" aria-label="${tBi('Desktop: not supported', '桌面版：不支持')}">
+            <span class="about-platform-chip" aria-label="${tBi('Desktop: not supported', '：')}">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><path d="M8 21h8"/><path d="M12 17v4"/><circle cx="12" cy="10" r="3"/></svg>
-                ${tBi('Desktop', '桌面版')}
+                ${tBi('Desktop', '')}
             </span>
-            <span class="about-platform-chip" aria-label="${tBi('SDK: not supported', 'SDK：不支持')}">
+            <span class="about-platform-chip" aria-label="${tBi('SDK: not supported', 'SDK：')}">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
                 SDK
             </span>
-            <span class="about-platform-chip" aria-label="${tBi('CLI: not supported', 'CLI：不支持')}">
+            <span class="about-platform-chip" aria-label="${tBi('CLI: not supported', 'CLI：')}">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
                 CLI
             </span>
         </div>
         <p class="about-platform-note">${tBi(
         'This plugin is designed for the <strong>Antigravity IDE</strong> platform. Desktop, SDK, and CLI are separate product lines and are not supported.',
-        '本插件面向 <strong>Antigravity IDE</strong> 平台开发。桌面版、SDK 和 CLI 均为独立产品线，不在支持范围内。',
+        ' <strong>Antigravity IDE</strong> 。、SDK  CLI ，。',
     )}</p>
     </div>`;
 
@@ -174,7 +174,7 @@ export function buildAboutTabContent(): string {
     <div class="about-section">
         <h3 class="about-section-title">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            ${tBi('Feature Navigation', '功能导航')}
+            ${tBi('Feature Navigation', '')}
         </h3>
         <div class="about-cards">${cardItems}</div>
     </div>`;
@@ -184,16 +184,16 @@ export function buildAboutTabContent(): string {
     <div class="about-section about-github">
         <h3 class="about-section-title">
             ${ICON.git}
-            ${tBi('Open Source', '开源项目')}
+            ${tBi('Open Source', '')}
         </h3>
         <div class="about-info-box about-info-github">
             <p>
                 ${tBi(
         'By <strong>AGI-is-going-to-arrive</strong> — open-source on GitHub. If you find it helpful, a',
-        '作者 <strong>AGI-is-going-to-arrive</strong> — 项目已在 GitHub 开源。如果觉得有帮助，点个',
+        ' <strong>AGI-is-going-to-arrive</strong> —  GitHub 。，',
     )}
                 <span class="star-inline">${ICON.star}</span>
-                ${tBi('would be appreciated.', '就是最大的支持。')}
+                ${tBi('would be appreciated.', '。')}
                 <span class="heart-inline">${ICON.heart}</span>
             </p>
             <a class="about-github-link" href="https://github.com/AGI-is-going-to-arrive/Antigravity-Context-Window-Monitor" target="_blank" rel="noopener noreferrer">
@@ -207,12 +207,12 @@ export function buildAboutTabContent(): string {
     <div class="about-section">
         <h3 class="about-section-title">
             ${ABOUT_ICON.info}
-            ${tBi('Tips', '使用提示')}
+            ${tBi('Tips', '')}
         </h3>
         <div class="about-info-box about-info-tips">
             <p>${tBi(
         'Recommended: use a single IDE window. Multi-window setups may cause data desync between instances (e.g. activity timeline and GM data refresh).',
-        '建议使用单窗口运行。多窗口可能导致实例间数据不同步（如活动时间线和 GM 数据刷新）。',
+        '。（ GM ）。',
     )}</p>
         </div>
     </div>`;
@@ -222,12 +222,12 @@ export function buildAboutTabContent(): string {
     <div class="about-section">
         <h3 class="about-section-title">
             ${ABOUT_ICON.shieldCheck}
-            ${tBi('Compatibility', '兼容性验证')}
+            ${tBi('Compatibility', '')}
         </h3>
         <div class="about-info-box about-info-compat">
             ${tBi(
         '<p>The following Antigravity IDE versions have been <strong>tested by contributors</strong> and confirmed working with this plugin:</p><p><strong>Most stable:</strong> v1.18.4, v1.19.6</p><p><strong>Tested range:</strong> v1.19.6 → v1.20.6 → v1.23.2 — all versions in this range have been verified to work normally.</p><p>Future Antigravity updates may change internal APIs at any time, potentially breaking compatibility. See the Disclaimer below for details.</p>',
-        '<p>以下 Antigravity IDE 版本已经过<strong>贡献者实测验证</strong>，确认本插件可正常运行：</p><p><strong>最稳定版本：</strong>v1.18.4、v1.19.6</p><p><strong>验证范围：</strong>v1.19.6 → v1.20.6 → v1.23.2 —— 该区间内所有版本均已验证可正常使用。</p><p>未来 Antigravity 更新可能随时变更内部 API，导致插件失效。详见下方免责声明。</p>',
+        '<p> Antigravity IDE <strong></strong>，：</p><p><strong>：</strong>v1.18.4、v1.19.6</p><p><strong>：</strong>v1.19.6 → v1.20.6 → v1.23.2 —— 。</p><p> Antigravity  API，。。</p>',
     )}
         </div>
     </div>`;
@@ -237,12 +237,12 @@ export function buildAboutTabContent(): string {
     <div class="about-section">
         <h3 class="about-section-title">
             ${ABOUT_ICON.alert}
-            ${tBi('Disclaimer', '免责声明')}
+            ${tBi('Disclaimer', '')}
         </h3>
         <div class="about-info-box about-info-disclaimer">
             ${tBi(
         '<p><strong>This is an unofficial community project and is not affiliated with, endorsed by, or associated with Google.</strong> It acts strictly in read-only mode to visualize usage data. Use at your own risk.</p><p>Data is derived from <strong>internal interfaces that are undocumented and may change without notice</strong>. Metrics are derived from Generator Metadata, checkpoint snapshots, or character-based heuristics. <strong>All numbers are best-effort approximations.</strong></p><p><strong>Context Window Limitation:</strong> Antigravity does not utilize the full context window advertised by the underlying model. The actual effective context window is dynamically determined based on the checkpoint parameters of each model, which roughly ranges from <strong>80K to 256K tokens</strong>.</p>',
-        '<p><strong>本分支扩展为非官方社区开源项目，与 Google 没有任何关联或官方背书。</strong>本工具仅以只读模式监控本地内部 API 用于可视化个人日常数据，使用风险自负。</p><p>数据通过<strong>内部接口</strong>获取，这些接口<strong>未公开文档且可能随时变更</strong>。指标来自 Generator Metadata、检查点快照或字符启发式计算。<strong>所有数值均为尽力计算的近似值。</strong></p><p><strong>上下文窗口限制：</strong>Antigravity 并未适配底层模型标称的完整上下文窗口。实际有效上下文是根据每个模型对应的检查点（checkpoint）数据动态确定的，当前平台实际有效阈值大致为 <strong>80K–256K Token</strong>。</p>',
+        '<p><strong>， Google 。</strong> API ，。</p><p><strong></strong>，<strong></strong>。 Generator Metadata、。<strong>。</strong></p><p><strong>：</strong>Antigravity 。（checkpoint）， <strong>80K–256K Token</strong>。</p>',
     )}
         </div>
     </div>`;
@@ -252,12 +252,12 @@ export function buildAboutTabContent(): string {
     <div class="about-section">
         <h3 class="about-section-title">
             ${ABOUT_ICON.globe}
-            ${tBi('Language', '语言')}
+            ${tBi('Language', '')}
         </h3>
         <div class="about-info-box about-info-lang">
             <p>${tBi(
-        'This extension supports <strong>Chinese / English / Bilingual</strong> display. Use the <strong>中文 | EN | 双语</strong> buttons in the top-right corner of this panel to switch.',
-        '本插件支持 <strong>中文 / English / 双语</strong> 显示。请使用面板右上角的 <strong>中文 | EN | 双语</strong> 按钮切换。',
+        'This extension supports <strong>Chinese / English / Bilingual</strong> display. Use the <strong> | EN | </strong> buttons in the top-right corner of this panel to switch.',
+        ' <strong> / English / </strong> 。 <strong> | EN | </strong> 。',
     )}</p>
         </div>
     </div>`;

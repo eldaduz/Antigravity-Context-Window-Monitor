@@ -534,9 +534,9 @@ export function groupModelConfigsByQuotaPool(configs: ModelConfig[]): ModelQuota
 const RESET_TIME_TURNOVER_MIN_JUMP_MS = 10 * 60 * 1000;
 
 /**
- * resetTime 会在同一周期内轻微漂移，不能把“任何变化”都当成真正的额度重置。
- * 只有旧 resetTime 已经过期，且新的 resetTime 重新跳回未来并明显大于旧值时，
- * 才认为发生了新周期切换。
+ * resetTime ，“”。
+ *  resetTime ， resetTime ，
+ * 。
  */
 export function shouldSettleOnResetTimeChange(
     oldResetTime: string,
@@ -612,7 +612,7 @@ async function fetchAndOverrideCheckpointerLimits(ls: LSInfo): Promise<boolean> 
                 allFetchedInfo.push(`[${modelIdVal || modelVal}] Exp JSON: undefined (No active checkpointer experiment)`);
             }
 
-            // 同步更新 activeModelSpecs 数据库
+            //  activeModelSpecs
             if (resolved) {
                 updateModelSpec(resolved, {
                     modelId: modelIdVal || modelVal,
@@ -957,11 +957,11 @@ function baselineExpiredPoolsForAccount(email: string): void {
         const modelNames = pool.modelLabels.slice(0, 3).join(', ');
         const extra = pool.modelLabels.length > 3 ? ` +${pool.modelLabels.length - 3}` : '';
         const displayName = snap.name || snap.email;
-        const openMonitorLabel = tBi('Open Monitor', '打开监控');
+        const openMonitorLabel = tBi('Open Monitor', '');
         vscode.window.showInformationMessage(
             tBi(
                 `✅ ${displayName}: ${modelNames}${extra} quota has reset. You can switch to this account now.`,
-                `✅ ${displayName}: ${modelNames}${extra} 额度已重置，可以切换到该账号了。`,
+                `✅ ${displayName}: ${modelNames}${extra} ，。`,
             ),
             openMonitorLabel,
         ).then(choice => {
@@ -1452,9 +1452,9 @@ async function pollContextUsage(): Promise<void> {
         }
         lastPolledWorkspaceUri = normalizedWs;
 
-        // 午夜归档必须在本轮轮询前半段执行：
-        // 1. 不能被“无会话 / 无活跃对话”的提前 return 跳过
-        // 2. 新一天的 GM / DailyLedger 记录必须建立在已 rollover 的干净状态上
+        // ：
+        // 1. “ / ” return
+        // 2.  GM / DailyLedger  rollover
         performDailyArchival();
 
         // 2. Discover LS (with caching + periodic PID revalidation)
@@ -1967,8 +1967,8 @@ async function pollContextUsage(): Promise<void> {
                             if (settled) {
                                 log(`[DailyLedger] proactive settlement: ${settled.totalCalls} calls for [${settled.poolModelLabels.join(', ')}] (${snap.email})`);
                                 durableGlobalState.update('dailyLedgerState', dailyLedger.serialize());
-                                
-                                // 同步对 GMTracker 进行 quota-reset 归档
+
+                                //  GMTracker  quota-reset
                                 try {
                                     const blCount = gmTracker.baselineForQuotaReset(snap.email, pool.modelIds, pool.resetTime);
                                     log(`[GMTracker] proactive baseline: ${blCount} calls for [${pool.modelIds.join(', ')}] (${snap.email})`);
@@ -2140,11 +2140,11 @@ function checkQuotaNotification(configs: import('./models').ModelConfig[]): void
                 quotaNotifiedModels.add(groupKey);
                 const pct = (group.minFraction * 100).toFixed(1);
                 const names = group.labels.join(', ');
-                const openMonitorLabel = tBi('Open Monitor', '打开监控');
+                const openMonitorLabel = tBi('Open Monitor', '');
                 vscode.window.showWarningMessage(
                     tBi(
                         `⚠ ${names} quota low: ${pct}% remaining`,
-                        `⚠ ${names} 额度偏低：剩余 ${pct}%`,
+                        `⚠ ${names} ： ${pct}%`,
                     ),
                     openMonitorLabel,
                 ).then(choice => {
@@ -2204,7 +2204,7 @@ function checkCachedAccountResets(): void {
 
             const extra = pool.modelLabels.length > 3 ? ` +${pool.modelLabels.length - 3}` : '';
             const displayName = snap.name || snap.email;
-            const openMonitorLabel = tBi('Open Monitor', '打开监控');
+            const openMonitorLabel = tBi('Open Monitor', '');
 
             // ── Baseline this cached account's GM calls for the expired pool only ──
             const baselinedCount = gmTracker.baselineForQuotaReset(snap.email, pool.modelIds || pool.modelLabels, pool.resetTime);
@@ -2231,7 +2231,7 @@ function checkCachedAccountResets(): void {
             vscode.window.showInformationMessage(
                 tBi(
                     `✅ ${displayName}: ${modelNames}${extra} quota has reset. You can switch to this account now.`,
-                    `✅ ${displayName}: ${modelNames}${extra} 额度已重置，可以切换到该账号了。`,
+                    `✅ ${displayName}: ${modelNames}${extra} ，。`,
                 ),
                 openMonitorLabel,
             ).then(choice => {

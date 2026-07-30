@@ -546,7 +546,7 @@ export class ActivityTracker {
             return;
         }
 
-        // NOTIFY_USER — AI 回复用户的实际正文
+        // NOTIFY_USER — AI
         if (type === 'CORTEX_STEP_TYPE_NOTIFY_USER') {
             const nu = (step.notifyUser || {}) as Record<string, unknown>;
             const text = ((nu.notificationContent || nu.message || '') as string).trim();
@@ -600,11 +600,11 @@ export class ActivityTracker {
             const notifyMsg = extractNotifyMessage(toolCalls as unknown[] | undefined);
             if (!resp && notifyMsg) {
                 resp = notifyMsg;
-                detail = '';  // 清除 '→ N tools'，这不是工具调用，是 AI 回复
+                detail = '';  //  '→ N tools'，， AI
             }
             // Fallback: show thinking duration if no response text
             if (!resp && tdStr) {
-                resp = '正在思考';
+                resp = '';
             }
             // BUG FIX: skip empty PLANNER_RESPONSE events (no response, no thinking,
             // no toolCalls). These are LS internal decision steps that clutter the timeline.
@@ -748,7 +748,7 @@ export class ActivityTracker {
                 detail = '';
             }
             if (!aiResp && tdStr) {
-                aiResp = '正在思考';
+                aiResp = '';
             }
             const hasContent = aiResp || (Array.isArray(toolCalls) && toolCalls.length > 0);
             if (!hasContent) { return null; }
@@ -1217,15 +1217,15 @@ export class ActivityTracker {
                             const cpMatch = anchorText.match(/CHECKPOINT\s*(\d+)/);
                             systemLabel = cpMatch ? `Checkpoint ${cpMatch[1]}` : 'Checkpoint';
                         } else if (isConvHistory) {
-                            systemLabel = tBi('Context Injection', '上下文注入');
+                            systemLabel = tBi('Context Injection', '');
                         } else if (isUserInfo) {
-                            systemLabel = tBi('User Information', '用户信息');
+                            systemLabel = tBi('User Information', '');
                         } else if (isUserRules) {
-                            systemLabel = tBi('User Rules', '用户规则');
+                            systemLabel = tBi('User Rules', '');
                         } else if (isMcpServers) {
-                            systemLabel = tBi('MCP Servers', 'MCP 服务');
+                            systemLabel = tBi('MCP Servers', 'MCP ');
                         } else if (isWorkflows) {
-                            systemLabel = tBi('Workflows', '工作流');
+                            systemLabel = tBi('Workflows', '');
                         }
                         userAnchorEvents.push({
                             timestamp: anchorTimestamp,

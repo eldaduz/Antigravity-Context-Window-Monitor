@@ -205,8 +205,8 @@ export function extractCheckpointSummaries(messagePrompts: unknown): GMCheckpoin
         if (!match) { continue; }
 
         const checkpointNumber = parseInt(match[1], 10);
-        const stepIndex = typeof rec.stepIdx === 'number' && rec.stepIdx >= 0 
-            ? rec.stepIdx 
+        const stepIndex = typeof rec.stepIdx === 'number' && rec.stepIdx >= 0
+            ? rec.stepIdx
             : (100000 + i * 100 + checkpointNumber);
         const tokens = typeof rec.numTokens === 'number' ? rec.numTokens : 0;
 
@@ -373,8 +373,8 @@ export function extractSystemContextItems(messagePrompts: unknown): GMSystemCont
             checkpointNumber = cpMatch ? parseInt(cpMatch[1], 10) : undefined;
         }
 
-        const stepIdx = typeof rec.stepIdx === 'number' && rec.stepIdx >= 0 
-            ? rec.stepIdx 
+        const stepIdx = typeof rec.stepIdx === 'number' && rec.stepIdx >= 0
+            ? rec.stepIdx
             : (100000 + i * 100 + (checkpointNumber !== undefined ? checkpointNumber : 0));
         const tokens = typeof rec.numTokens === 'number' ? rec.numTokens : 0;
 
@@ -971,15 +971,15 @@ export function extractCheckpointsFromTrajectorySteps(steps: unknown): GMCheckpo
         const modelUsage = (meta.modelUsage || {}) as Record<string, unknown>;
         const inTok = typeof modelUsage.inputTokens === 'number' ? modelUsage.inputTokens : parseInt(String(modelUsage.inputTokens || '0'), 10);
 
-        // 提取 checkpoint 编号，如果拿不到就按出现顺序自增
+        //  checkpoint ，
         let checkpointNumber = typeof cp.checkpointIndex === 'number' ? cp.checkpointIndex : undefined;
         if (checkpointNumber === undefined && cp.intentOnly === true) {
-            checkpointNumber = 0; // 第0次，生成意图
+            checkpointNumber = 0; // 0，
         } else if (checkpointNumber === undefined) {
             checkpointNumber = checkpointSeq++;
         }
 
-        // 拼装比以前还要精美详细的 fullText！
+        //  fullText！
         const userIntent = cp.userIntent ? String(cp.userIntent) : '';
         const sessionSummary = cp.sessionSummary ? String(cp.sessionSummary) : '';
         const userRequests = cp.userRequests as unknown;
@@ -987,28 +987,28 @@ export function extractCheckpointsFromTrajectorySteps(steps: unknown): GMCheckpo
 
         let formattedText = ``;
         if (cp.intentOnly === true) {
-            formattedText += `### 意图与摘要生成 (Intent Only)\n`;
+            formattedText += `###  (Intent Only)\n`;
         } else {
-            formattedText += `### 上下文压缩 (Full Checkpoint)\n`;
+            formattedText += `###  (Full Checkpoint)\n`;
         }
 
         if (userIntent) {
-            formattedText += `**所含意图 (Intent)**:\n${userIntent}\n\n`;
+            formattedText += `** (Intent)**:\n${userIntent}\n\n`;
         }
 
         if (sessionSummary) {
-            formattedText += `**会话总结 (Session Summary)**:\n${sessionSummary}\n\n`;
+            formattedText += `** (Session Summary)**:\n${sessionSummary}\n\n`;
         }
 
         if (userRequests) {
             const reqs = Array.isArray(userRequests) ? userRequests : [String(userRequests)];
             if (reqs.length > 0) {
-                formattedText += `**所含请求 (Requests)**:\n${reqs.map(r => `- ${r}`).join('\n')}\n\n`;
+                formattedText += `** (Requests)**:\n${reqs.map(r => `- ${r}`).join('\n')}\n\n`;
             }
         }
 
         if (fileDiffs && fileDiffs.length > 0) {
-            formattedText += `**代码文件变更 (File Diffs)**:\n`;
+            formattedText += `** (File Diffs)**:\n`;
             for (const fd of fileDiffs) {
                 const fPath = fd.filePath || fd.path || '';
                 if (fPath) {
@@ -1017,8 +1017,8 @@ export function extractCheckpointsFromTrajectorySteps(steps: unknown): GMCheckpo
             }
         }
 
-        const stepIndex = typeof step.stepIndex === 'number' && step.stepIndex >= 0 
-            ? step.stepIndex 
+        const stepIndex = typeof step.stepIndex === 'number' && step.stepIndex >= 0
+            ? step.stepIndex
             : (100000 + i * 100 + checkpointNumber);
 
         summaries.push({

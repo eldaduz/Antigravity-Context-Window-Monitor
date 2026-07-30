@@ -17,9 +17,9 @@ const CHEVRON_RIGHT = '<svg viewBox="0 0 16 16" width="12" height="12"><path fil
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const MONTH_NAMES_ZH = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+const MONTH_NAMES_ZH = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 const MONTH_NAMES_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const DAY_HEADERS_ZH = ['一', '二', '三', '四', '五', '六', '日'];
+const DAY_HEADERS_ZH = ['', '', '', '', '', '', ''];
 const DAY_HEADERS_EN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 function formatTokensK(n: number): string {
@@ -73,10 +73,10 @@ export function buildCalendarTabContent(store?: DailyStore, year?: number, month
     if (!store) {
         return `
             <section class="card empty">
-                <h2>${CALENDAR_ICON} ${tBi('Calendar', '日历')}</h2>
+                <h2>${CALENDAR_ICON} ${tBi('Calendar', '')}</h2>
                 <p class="empty-desc">${tBi(
             'Calendar data is not initialized yet.',
-            '日历数据尚未初始化。',
+            '。',
         )}</p>
             </section>`;
     }
@@ -94,10 +94,10 @@ export function buildCalendarTabContent(store?: DailyStore, year?: number, month
         parts.push(`
             <section class="card">
                 <div class="cal-summary-header">
-                    <h2>${ICON.chart} ${tBi('Usage Summary', '用量汇总')}</h2>
+                    <h2>${ICON.chart} ${tBi('Usage Summary', '')}</h2>
                     <div class="cal-summary-toggle" id="calSummaryToggle">
-                        <button class="cal-summary-btn active" data-summary-mode="monthly">${tBi('Monthly', '月度')}</button>
-                        <button class="cal-summary-btn" data-summary-mode="alltime">${tBi('All-Time', '全部')}</button>
+                        <button class="cal-summary-btn active" data-summary-mode="monthly">${tBi('Monthly', '')}</button>
+                        <button class="cal-summary-btn" data-summary-mode="alltime">${tBi('All-Time', '')}</button>
                     </div>
                 </div>
                 <div class="cal-summary-pane" id="calSummaryMonthly" style="display:block">
@@ -117,7 +117,7 @@ export function buildCalendarTabContent(store?: DailyStore, year?: number, month
         parts.push(`
             <section class="card cal-clear-section">
                 <button class="cal-clear-btn" id="clearCalendarBtn">
-                    ${ICON.trash} ${tBi('Clear All Calendar History', '清空所有日历历史')}
+                    ${ICON.trash} ${tBi('Clear All Calendar History', '')}
                 </button>
             </section>`);
     }
@@ -741,7 +741,7 @@ function buildMonthView(store: DailyStore, year: number, month: number): string 
 
     const monthLabel = tBi(
         `${MONTH_NAMES_EN[month - 1]} ${year}`,
-        `${year}年${MONTH_NAMES_ZH[month - 1]}`,
+        `${year}${MONTH_NAMES_ZH[month - 1]}`,
     );
     const lang = getLanguage();
     const dayHeaders = lang === 'en' ? DAY_HEADERS_EN : DAY_HEADERS_ZH;
@@ -767,7 +767,7 @@ function buildMonthView(store: DailyStore, year: number, month: number): string 
         if (hasData) {
             const highActivity = (cellData.gmCalls || 0) > 20 || cellData.totalCost > 0.5;
             cells.push(`
-                <button class="cal-cell has-data${todayClass}" data-cal-date="${dateStr}" data-tooltip="${tBi('has data', '有数据')}">
+                <button class="cal-cell has-data${todayClass}" data-cal-date="${dateStr}" data-tooltip="${tBi('has data', '')}">
                     ${day}
                     <div class="cal-dot${highActivity ? ' high-activity' : ''}"></div>
                 </button>`);
@@ -794,7 +794,7 @@ function buildMonthView(store: DailyStore, year: number, month: number): string 
 
     return `
         <section class="card">
-            <h2>${CALENDAR_ICON} ${tBi('Calendar', '日历')}</h2>
+            <h2>${CALENDAR_ICON} ${tBi('Calendar', '')}</h2>
             <div class="cal-nav">
                 <button class="cal-nav-btn" data-cal-nav="prev" data-cal-year="${prevYear}" data-cal-month="${prevMonth}">
                     ${CHEVRON_LEFT}
@@ -847,7 +847,7 @@ function buildDayDetail(record: DailyRecord, dateStr: string): string {
     }
     const mergedGMHtml = buildMergedGMRows(mergedGM);
     const todayBadge = isToday(dateStr)
-        ? `<span class="badge info-badge">${tBi('TODAY', '今天')}</span>`
+        ? `<span class="badge info-badge">${tBi('TODAY', '')}</span>`
         : '';
 
     return `
@@ -861,22 +861,22 @@ function buildDayDetail(record: DailyRecord, dateStr: string): string {
                 ${totalGMCalls > 0 ? `
                 <div class="cal-day-total">
                     <div class="cal-day-total-val">${totalGMCalls}</div>
-                    <div class="cal-day-total-label">${tBi('GM Calls', 'GM 调用')}</div>
+                    <div class="cal-day-total-label">${tBi('GM Calls', 'GM ')}</div>
                 </div>` : ''}
                 ${gmTotalTokens > 0 ? `
                 <div class="cal-day-total">
                     <div class="cal-day-total-val">${formatTokensK(gmTotalTokens)}</div>
-                    <div class="cal-day-total-label">${tBi('Tokens', '令牌')}</div>
+                    <div class="cal-day-total-label">${tBi('Tokens', '')}</div>
                 </div>` : ''}
                 ${totalCost > 0 ? `
                 <div class="cal-day-total">
                     <div class="cal-day-total-val">${formatCost(totalCost)}</div>
-                    <div class="cal-day-total-label">${tBi('Cost', '费用')}</div>
+                    <div class="cal-day-total-label">${tBi('Cost', '')}</div>
                 </div>` : ''}
                 ${totalGMCredits > 0 ? `
                 <div class="cal-day-total">
                     <div class="cal-day-total-val">${totalGMCredits}</div>
-                    <div class="cal-day-total-label">${tBi('Credits', '积分')}</div>
+                    <div class="cal-day-total-label">${tBi('Credits', '')}</div>
                 </div>` : ''}
             </div>
             ${mergedGMHtml}
@@ -890,10 +890,10 @@ function buildMergedGMRows(merged: Record<string, { calls: number; credits: numb
     if (entries.length === 0) { return ''; }
 
     let html = '<div class="cal-model-rows">';
-    html += `<div class="cal-gm-section-label">GM ${tBi('Summary', '汇总')}</div>`;
+    html += `<div class="cal-gm-section-label">GM ${tBi('Summary', '')}</div>`;
     for (const [name, ms] of entries) {
         const chips: string[] = [];
-        if (ms.calls > 0) { chips.push(`<span class="cal-chip cal-chip-tools">${CAL_ICON.calls} ${ms.calls} ${tBi('calls', '调用')}</span>`); }
+        if (ms.calls > 0) { chips.push(`<span class="cal-chip cal-chip-tools">${CAL_ICON.calls} ${ms.calls} ${tBi('calls', '')}</span>`); }
         if (ms.credits > 0) { chips.push(`<span class="cal-chip cal-chip-tokens">${CAL_ICON.credit} ${ms.credits}</span>`); }
         const avgTTFT = ms.ttftWeight > 0 ? ms.ttftSum / ms.ttftWeight : 0;
         if (avgTTFT > 0) { chips.push(`<span class="cal-chip cal-chip-ttft">${CAL_ICON.clock} ${avgTTFT.toFixed(1)}s</span>`); }
@@ -901,7 +901,7 @@ function buildMergedGMRows(merged: Record<string, { calls: number; credits: numb
         if (avgCache > 0) { chips.push(`<span class="cal-chip cal-chip-cache">${CAL_ICON.cache} ${(avgCache * 100).toFixed(0)}%</span>`); }
         if (ms.cost > 0) { chips.push(`<span class="cal-chip cal-chip-cost">${CAL_ICON.dollar} ${fmtCostShort(ms.cost)}</span>`); }
         const totalTok = ms.inputTokens + ms.outputTokens;
-        if (totalTok > 0) { chips.push(`<span class="cal-chip cal-chip-tokens">${fmtTok(totalTok)} ${tBi('tok', '令牌')}</span>`); }
+        if (totalTok > 0) { chips.push(`<span class="cal-chip cal-chip-tokens">${fmtTok(totalTok)} ${tBi('tok', '')}</span>`); }
         html += `<div class="cal-model-row"><span class="cal-model-name">${esc(name)}</span><span class="cal-model-chips">${chips.join('')}</span></div>`;
     }
     html += '</div>';
@@ -939,10 +939,10 @@ function buildMonthlySummaryGrid(store: DailyStore, year: number, month: number)
         const lang = getLanguage();
         const monthLabel = lang === 'en'
             ? `${MONTH_NAMES_EN[month - 1]} ${year}`
-            : `${year}年${MONTH_NAMES_ZH[month - 1]}`;
+            : `${year}${MONTH_NAMES_ZH[month - 1]}`;
         return `<p class="cal-summary-empty">${tBi(
             `No data for ${monthLabel} yet.`,
-            `${monthLabel}暂无数据。`,
+            `${monthLabel}。`,
         )}</p>`;
     }
 
@@ -976,27 +976,27 @@ function buildSummaryOverviewGrid(
             <div class="cal-overview-grid">
                 <div class="cal-overview-item">
                     <div class="cal-overview-val">${dayCount}</div>
-                    <div class="cal-overview-label">${tBi('Days', '天数')}</div>
+                    <div class="cal-overview-label">${tBi('Days', '')}</div>
                 </div>
                 ${gmCalls > 0 ? `
                 <div class="cal-overview-item">
                     <div class="cal-overview-val">${gmCalls}</div>
-                    <div class="cal-overview-label">${tBi('GM Calls', 'GM 调用')}</div>
+                    <div class="cal-overview-label">${tBi('GM Calls', 'GM ')}</div>
                 </div>` : ''}
                 ${gmTokens > 0 ? `
                 <div class="cal-overview-item">
                     <div class="cal-overview-val">${formatTokensK(gmTokens)}</div>
-                    <div class="cal-overview-label">${tBi('Tokens', '令牌')}</div>
+                    <div class="cal-overview-label">${tBi('Tokens', '')}</div>
                 </div>` : ''}
                 ${cost > 0 ? `
                 <div class="cal-overview-item">
                     <div class="cal-overview-val">${formatCost(cost)}</div>
-                    <div class="cal-overview-label">${tBi('Cost', '费用')}</div>
+                    <div class="cal-overview-label">${tBi('Cost', '')}</div>
                 </div>` : ''}
                 ${gmCredits > 0 ? `
                 <div class="cal-overview-item">
                     <div class="cal-overview-val">${gmCredits}</div>
-                    <div class="cal-overview-label">${tBi('Credits', '积分')}</div>
+                    <div class="cal-overview-label">${tBi('Credits', '')}</div>
                 </div>` : ''}
             </div>`;
 }

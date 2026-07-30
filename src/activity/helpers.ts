@@ -201,13 +201,13 @@ export function extractNotifyMessage(toolCalls: unknown[] | undefined): string {
 export function buildGMVirtualPreview(call: GMCallEntry): { detail: string; aiResponse?: string; fullAiResponse?: string } {
     // Priority 0: Interrupted/cancelled call (0 tokens)
     if (call.inputTokens === 0 && call.outputTokens === 0) {
-        return { detail: tBi('⚡ interrupted', '⚡ 已中断') };
+        return { detail: tBi('⚡ interrupted', '⚡ ') };
     }
 
     // Tool count = non-reasoning steps in this call (stepIndices minus the PLANNER_RESPONSE)
     const toolUsed = Math.max(0, call.stepIndices.length - 1);
     const toolSuffix = toolUsed > 0
-        ? ` → ${toolUsed} ${tBi(toolUsed === 1 ? 'tool' : 'tools', '工具')}`
+        ? ` → ${toolUsed} ${tBi(toolUsed === 1 ? 'tool' : 'tools', '')}`
         : '';
 
     // Priority 1: AI response snippet matched by stepIndex
@@ -246,7 +246,7 @@ export function buildGMVirtualPreview(call: GMCallEntry): { detail: string; aiRe
         return { detail: `+${call.stepIndices.length} steps (estimated)` };
     }
 
-    return { detail: tBi('GM call', 'GM 调用') };
+    return { detail: tBi('GM call', 'GM ') };
 }
 
 export function sameStepDistribution(a: Record<string, number>, b: Record<string, number>): boolean {

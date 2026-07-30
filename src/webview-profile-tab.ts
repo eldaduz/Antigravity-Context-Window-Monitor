@@ -8,14 +8,15 @@ import { formatResetAbsolute, formatResetCountdown } from './reset-time';
 import { ICON } from './webview-icons';
 import { esc } from './webview-helpers';
 import { getDaysUntilBillingDay } from './billing-day';
+import { collapseModelQuotas, getResetHorizon } from './quota-families';
 
 function formatCreditTypeLabel(creditType: string): string {
     const key = creditType.replace('CREDIT_TYPE_', '');
     const labelMap: Record<string, [string, string]> = {
-        PROMPT: ['Prompt Credits', 'Prompt 额度'],
-        FLOW: ['Flow Credits', 'Flow 额度'],
-        GOOGLE_AI: ['Google AI Credits', 'Google AI 额度'],
-        GOOGLE_AI_STUDIO: ['Google AI Studio Credits', 'Google AI Studio 额度'],
+        PROMPT: ['Prompt Credits', 'Prompt '],
+        FLOW: ['Flow Credits', 'Flow '],
+        GOOGLE_AI: ['Google AI Credits', 'Google AI '],
+        GOOGLE_AI_STUDIO: ['Google AI Studio Credits', 'Google AI Studio '],
     };
     const mapped = labelMap[key];
     return mapped ? tBi(mapped[0], mapped[1]) : key.replace(/_/g, ' ');
@@ -33,10 +34,10 @@ export function buildProfileContent(
     if (!userInfo) {
         return `
             <section class="card empty">
-                <h2>${ICON.user} ${tBi('Profile', '个人')}</h2>
+                <h2>${ICON.user} ${tBi('Profile', '')}</h2>
                 <p class="empty-desc">${tBi(
             'Waiting for user data from LS...',
-            '等待 LS 用户数据...',
+            ' LS ...',
         )}</p>
             </section>`;
     }
@@ -90,16 +91,16 @@ function buildAccountSection(userInfo: UserStatusInfo, billingDay?: number): str
     let refreshBadge = '';
     if (day >= 1 && day <= 31) {
         const daysLeft = getDaysUntilBillingDay(day) ?? 0;
-        const activityLink = ` <a class="gai-action-link" href="https://antigravity.google/g1-activity" target="_blank">${tBi('Activity Dashboard', '活动记录看板')}</a>`;
+        const activityLink = ` <a class="gai-action-link" href="https://antigravity.google/g1-activity" target="_blank">${tBi('Activity Dashboard', '')}</a>`;
         if (daysLeft === 0) {
-            refreshBadge = `<span class="gai-refresh-badge gai-refresh-today">${tBi('Expires today', '今日到期')}</span>` + activityLink;
+            refreshBadge = `<span class="gai-refresh-badge gai-refresh-today">${tBi('Expires today', '')}</span>` + activityLink;
         } else {
-            refreshBadge = `<span class="gai-refresh-badge">${daysLeft}${tBi('d until expiry', '天后到期')}</span>` + activityLink;
+            refreshBadge = `<span class="gai-refresh-badge">${daysLeft}${tBi('d until expiry', '')}</span>` + activityLink;
         }
     } else {
-        refreshBadge = `<span class="gai-refresh-badge gai-refresh-unset">${tBi('Expiry date not set', '到期日未设置')}</span>`
-            + ` <a class="gai-action-link" data-scroll-to="profileBillingDayInput">${tBi('Set below', '在下方设置')}</a>`
-            + ` <a class="gai-action-link" href="https://antigravity.google/g1-activity" target="_blank">${tBi('Activity Dashboard', '活动记录看板')}</a>`;
+        refreshBadge = `<span class="gai-refresh-badge gai-refresh-unset">${tBi('Expiry date not set', '')}</span>`
+            + ` <a class="gai-action-link" data-scroll-to="profileBillingDayInput">${tBi('Set below', '')}</a>`
+            + ` <a class="gai-action-link" href="https://antigravity.google/g1-activity" target="_blank">${tBi('Activity Dashboard', '')}</a>`;
     }
 
     let creditsHtml = '';
@@ -115,7 +116,7 @@ function buildAccountSection(userInfo: UserStatusInfo, billingDay?: number): str
         // No credits but billing day or "not set" info still relevant
         creditsHtml = `<div class="gai-credits gai-credits-empty">
             <div class="gai-credit-item">
-                <span class="gai-label">${tBi('AI Credits', 'AI 积分')}</span>
+                <span class="gai-label">${tBi('AI Credits', 'AI ')}</span>
                 <span class="gai-value" style="color:var(--color-text-dim)">0</span>
             </div>
             <div class="gai-credit-item gai-credit-refresh">${refreshBadge}</div>
@@ -126,10 +127,10 @@ function buildAccountSection(userInfo: UserStatusInfo, billingDay?: number): str
         <section class="card">
             <h2>
                 ${ICON.user}
-                ${tBi('Account', '账户')}
+                ${tBi('Account', '')}
                 <span class="tier-badge" style="background:${tier.bg};color:${tier.color}">${esc(userInfo.planName)}</span>
                 ${userInfo.userTierName ? `<span class="tier-badge tier-sub" style="background:rgba(255,255,255,0.06);color:var(--color-text-dim)">${esc(userInfo.userTierName)}</span>` : ''}
-                <button class="privacy-btn" id="privacyToggle" aria-label="${tBi('Toggle privacy mask', '切换隐私遮罩')}">${ICON.shield}</button>
+                <button class="privacy-btn" id="privacyToggle" aria-label="${tBi('Toggle privacy mask', '')}">${ICON.shield}</button>
             </h2>
             <div class="account-info">
                 <span class="account-name" data-real="${esc(userInfo.name)}" data-masked="${esc(userInfo.name.charAt(0))}***">${esc(userInfo.name)}</span>
@@ -137,13 +138,13 @@ function buildAccountSection(userInfo: UserStatusInfo, billingDay?: number): str
             </div>
             <p class="privacy-hint">${tBi(
         'Privacy mask is ON by default. Click the shield button above to reveal sensitive data.',
-        '隐私遮罩默认开启。点击上方 \ud83d\udee1\ufe0f 按钮可显示/隐藏真实信息。',
+        '。 \ud83d\udee1\ufe0f /。',
     )}</p>
             ${subHint}
             <div class="credits-section">
                 <div class="credit-row">
                     <div class="credit-header">
-                        <span>${tBi('Prompt Credits', 'Prompt 额度')}</span>
+                        <span>${tBi('Prompt Credits', 'Prompt ')}</span>
                         <span>${userInfo.availablePromptCredits.toLocaleString()} / ${userInfo.monthlyPromptCredits.toLocaleString()}</span>
                     </div>
                     <div class="credit-bar-wrap">
@@ -152,7 +153,7 @@ function buildAccountSection(userInfo: UserStatusInfo, billingDay?: number): str
                 </div>
                 <div class="credit-row">
                     <div class="credit-header">
-                        <span>${tBi('Flow Credits', 'Flow 额度')}</span>
+                        <span>${tBi('Flow Credits', 'Flow ')}</span>
                         <span>${userInfo.availableFlowCredits.toLocaleString()} / ${userInfo.monthlyFlowCredits.toLocaleString()}</span>
                     </div>
                     <div class="credit-bar-wrap">
@@ -163,7 +164,7 @@ function buildAccountSection(userInfo: UserStatusInfo, billingDay?: number): str
             ${creditsHtml}
             <div class="billing-day-inline">
                 <div class="billing-day-header">
-                    <span class="billing-day-label">${tBi('Monthly credits expiry day', '每月积分到期日')}</span>
+                    <span class="billing-day-label">${tBi('Monthly credits expiry day', '')}</span>
                     <div class="billing-day-input-group">
                         <div class="num-spinner">
                             <button type="button" class="num-spinner-btn decrement">\u2212</button>
@@ -178,18 +179,18 @@ function buildAccountSection(userInfo: UserStatusInfo, billingDay?: number): str
                 </div>
                 <p class="billing-day-desc">${tBi(
         'Your credits expire on a fixed day each month (e.g. the 15th). Set it here so the countdown shows how many days remaining. Check your billing email or payment history to find the exact date. Set to 0 to disable.',
-        '你的积分每月固定日期到期（如 15 号）。设置后会显示剩余天数倒计时。可查看订阅确认邮件或付款记录找到确切日期。设为 0 关闭倒计时。',
+        '（ 15 ）。。。 0 。',
     )}</p>
             </div>
         </section>`;
 }
 
 export function buildModelQuotaGrid(configs: ModelConfig[]): string {
-    const quotaModels = configs.filter(c => c.quotaInfo);
+    const quotaModels = collapseModelQuotas(configs);
     if (quotaModels.length === 0) { return ''; }
 
     const cards = quotaModels.map((c) => {
-        const qi = c.quotaInfo!;
+        const qi = c.quotaInfo;
         const pct = Math.round(qi.remainingFraction * 100);
         const barColor = pct <= 20 ? 'var(--color-danger)' : pct < 80 ? 'var(--color-warn)' : 'var(--color-ok)';
 
@@ -197,31 +198,27 @@ export function buildModelQuotaGrid(configs: ModelConfig[]): string {
         if (qi.resetTime) {
             const countdown = formatResetCountdown(qi.resetTime);
             const absolute = formatResetAbsolute(qi.resetTime);
-            resetLabel = countdown ? `${countdown} · ${absolute}` : absolute;
+            resetLabel = `${getResetHorizon(qi.resetTime)} · ${countdown ? `${countdown} · ${absolute}` : absolute}`;
         }
-
-        // Tag badge (e.g. "New")
-        const tagBadge = c.tagTitle
-            ? `<span class="model-tag-badge">${esc(c.tagTitle)}</span>` : '';
 
         return `
             <div class="model-card">
                 <div class="model-card-header">
-                    <span class="model-card-name">${esc(c.label)}${tagBadge}</span>
+                    <span class="model-card-name">${esc(c.family)}</span>
                     <span class="model-card-pct" style="color:${barColor}">${pct}%</span>
                 </div>
                 <div class="quota-bar-wrap">
                     <div class="quota-bar" style="width:${pct}%;background:${barColor}"></div>
                 </div>
                 <div class="model-card-meta" style="display: flex; align-items: center; justify-content: space-between;">
-                    ${resetLabel ? `<span class="model-card-reset">${tBi('Reset', '重置')} ${resetLabel}</span>` : ''}
+                    ${resetLabel ? `<span class="model-card-reset">${tBi('Reset', '')} ${resetLabel}</span>` : ''}
                 </div>
             </div>`;
     }).join('');
 
     return `
         <section class="card">
-            <h2>${ICON.bolt} ${tBi('Model Quota', '模型配额')}</h2>
+            <h2>${ICON.bolt} ${tBi('Model Quota', '')}</h2>
             <div class="model-grid">
                 ${cards}
             </div>
@@ -232,8 +229,8 @@ export function buildDefaultModelCard(userInfo: UserStatusInfo | null): string {
     if (!userInfo?.defaultModelLabel) { return ''; }
     return `
         <section class="card">
-            <h2>${ICON.bolt} ${tBi('Default Model', '默认模型')}</h2>
-            <div class="default-model">${tBi('Current default', '当前默认')}: <strong>${esc(userInfo.defaultModelLabel)}</strong></div>
+            <h2>${ICON.bolt} ${tBi('Default Model', '')}</h2>
+            <div class="default-model">${tBi('Current default', '')}: <strong>${esc(userInfo.defaultModelLabel)}</strong></div>
             ${userInfo.userTierDescription
             ? `<p class="raw-desc">${esc(userInfo.userTierDescription)}</p>`
             : ''}
@@ -244,17 +241,17 @@ function buildLimitsSection(userInfo: UserStatusInfo): string {
     const fmtLimit = (v: number): string => v === -1 ? '∞' : v.toLocaleString();
     const pl = userInfo.planLimits;
     const limitCards = [
-        [tBi('Max Input Tokens', '最大输入'), fmtLimit(pl.maxNumChatInputTokens)],
-        [tBi('Premium Messages', '高级消息数'), fmtLimit(pl.maxNumPremiumChatMessages)],
-        [tBi('Custom Instructions', '自定义指令'), tBi(
+        [tBi('Max Input Tokens', ''), fmtLimit(pl.maxNumChatInputTokens)],
+        [tBi('Premium Messages', ''), fmtLimit(pl.maxNumPremiumChatMessages)],
+        [tBi('Custom Instructions', ''), tBi(
             `${fmtLimit(pl.maxCustomChatInstructionCharacters)} chars`,
-            `${fmtLimit(pl.maxCustomChatInstructionCharacters)} 字符`,
+            `${fmtLimit(pl.maxCustomChatInstructionCharacters)} `,
         )],
-        [tBi('Pinned Context', '固定上下文'), fmtLimit(pl.maxNumPinnedContextItems)],
-        [tBi('Local Index', '本地索引'), fmtLimit(pl.maxLocalIndexSize)],
-        [tBi('Flex Credits', 'Flex 额度'), tBi(
+        [tBi('Pinned Context', ''), fmtLimit(pl.maxNumPinnedContextItems)],
+        [tBi('Local Index', ''), fmtLimit(pl.maxLocalIndexSize)],
+        [tBi('Flex Credits', 'Flex '), tBi(
             `${pl.monthlyFlexCreditPurchaseAmount.toLocaleString()} / mo`,
-            `${pl.monthlyFlexCreditPurchaseAmount.toLocaleString()} /月`,
+            `${pl.monthlyFlexCreditPurchaseAmount.toLocaleString()} /`,
         )],
     ].map(([k, v]) => `
         <div class="profile-metric-card">
@@ -264,7 +261,7 @@ function buildLimitsSection(userInfo: UserStatusInfo): string {
 
     return `
         <section class="card">
-            <h2>${ICON.shield} ${tBi('Plan Limits', '计划限制')}</h2>
+            <h2>${ICON.shield} ${tBi('Plan Limits', '')}</h2>
             <div class="profile-metric-grid">${limitCards}</div>
         </section>`;
 }
@@ -272,18 +269,18 @@ function buildLimitsSection(userInfo: UserStatusInfo): string {
 function buildFeatureAndTeamGrid(userInfo: UserStatusInfo): string {
     // Feature flags
     const allFeatures: { label: string; enabled: boolean }[] = [
-        { label: tBi('Web Search', '网页搜索'), enabled: userInfo.cascadeWebSearchEnabled },
-        { label: tBi('Browser', '浏览器'), enabled: userInfo.browserEnabled },
-        { label: tBi('Knowledge Base', '知识库'), enabled: userInfo.knowledgeBaseEnabled },
-        { label: tBi('Commit Msg', '提交信息'), enabled: userInfo.canGenerateCommitMessages },
-        { label: tBi('Auto Run', '自动执行'), enabled: userInfo.cascadeCanAutoRunCommands },
-        { label: tBi('Background', '后台'), enabled: userInfo.canAllowCascadeInBackground },
-        { label: tBi('Buy Credits', '购买额度'), enabled: userInfo.canBuyMoreCredits },
-        { label: tBi('Fast Autocomplete', '快速补全'), enabled: userInfo.hasAutocompleteFastMode },
-        { label: tBi('Sticky Premium', '锁定高级'), enabled: userInfo.allowStickyPremiumModels },
-        { label: tBi('Command Models', '命令模型'), enabled: userInfo.allowPremiumCommandModels },
-        { label: tBi('Tab Jump', 'Tab 跳转'), enabled: userInfo.hasTabToJump },
-        { label: tBi('Custom Icon', '自定义图标'), enabled: userInfo.canCustomizeAppIcon },
+        { label: tBi('Web Search', ''), enabled: userInfo.cascadeWebSearchEnabled },
+        { label: tBi('Browser', ''), enabled: userInfo.browserEnabled },
+        { label: tBi('Knowledge Base', ''), enabled: userInfo.knowledgeBaseEnabled },
+        { label: tBi('Commit Msg', ''), enabled: userInfo.canGenerateCommitMessages },
+        { label: tBi('Auto Run', ''), enabled: userInfo.cascadeCanAutoRunCommands },
+        { label: tBi('Background', ''), enabled: userInfo.canAllowCascadeInBackground },
+        { label: tBi('Buy Credits', ''), enabled: userInfo.canBuyMoreCredits },
+        { label: tBi('Fast Autocomplete', ''), enabled: userInfo.hasAutocompleteFastMode },
+        { label: tBi('Sticky Premium', ''), enabled: userInfo.allowStickyPremiumModels },
+        { label: tBi('Command Models', ''), enabled: userInfo.allowPremiumCommandModels },
+        { label: tBi('Tab Jump', 'Tab '), enabled: userInfo.hasTabToJump },
+        { label: tBi('Custom Icon', ''), enabled: userInfo.canCustomizeAppIcon },
     ];
     const featureTags = allFeatures.map(f =>
         `<span class="feature-tag${f.enabled ? ' enabled' : ''}">${f.label}</span>`
@@ -292,19 +289,19 @@ function buildFeatureAndTeamGrid(userInfo: UserStatusInfo): string {
     // Team config
     const tc = userInfo.teamConfig;
     const teamTags = [
-        { label: tBi('MCP Servers', 'MCP 服务'), enabled: tc.allowMcpServers },
-        { label: tBi('Auto Run Cmd', '自动执行命令'), enabled: tc.allowAutoRunCommands },
-        { label: tBi('Browser Experimental', '浏览器实验'), enabled: tc.allowBrowserExperimentalFeatures },
+        { label: tBi('MCP Servers', 'MCP '), enabled: tc.allowMcpServers },
+        { label: tBi('Auto Run Cmd', ''), enabled: tc.allowAutoRunCommands },
+        { label: tBi('Browser Experimental', ''), enabled: tc.allowBrowserExperimentalFeatures },
     ].map(f => `<span class="feature-tag${f.enabled ? ' enabled' : ''}">${f.label}</span>`).join('');
 
     return `
         <div class="profile-two-col">
             <section class="card profile-panel-card">
-                <h2>${ICON.bolt} ${tBi('Feature Flags', '功能开关')}</h2>
+                <h2>${ICON.bolt} ${tBi('Feature Flags', '')}</h2>
                 <div class="profile-chip-grid">${featureTags}</div>
             </section>
             <section class="card profile-panel-card">
-                <h2>${ICON.shield} ${tBi('Team Config', '团队配置')}</h2>
+                <h2>${ICON.shield} ${tBi('Team Config', '')}</h2>
                 <div class="profile-chip-grid">${teamTags}</div>
             </section>
         </div>`;

@@ -2,7 +2,7 @@
 
 A plugin built for **Antigravity** (Google's Windsurf-based IDE) that provides real-time monitoring of context window usage across all your chat sessions.
 
-**[🇨🇳 中文文档 / Chinese Documentation](readme_CN.md)**
+**[🇨🇳  / Chinese Documentation](readme_CN.md)**
 
 ---
 
@@ -47,7 +47,6 @@ A plugin built for **Antigravity** (Google's Windsurf-based IDE) that provides r
 
     | Before Undo | After Undo |
     | :---: | :---: |
-    | ![Before Undo](src/images/回退前.png) | ![After Undo](src/images/回退后.png) |
 
 * **🔄 Dynamic Model Switching**
     When switching models mid-conversation, the context window limit automatically updates to match the new model. Since v1.4.0, model display names are dynamically fetched via the `GetUserStatus` API.
@@ -55,7 +54,6 @@ A plugin built for **Antigravity** (Google's Windsurf-based IDE) that provides r
 * **🎨 Image Generation Tracking**
     When Nano Banana Pro is invoked for image generation during Gemini Pro conversations, the associated token consumption is tracked and marked with `📷` in the tooltip. Detection is based on step type and generator model name matching.
 
-    ![Image Generation Tracking](src/images/生成图片.png)
 
 * **🛌 Exponential Backoff Polling**
     When the language server is unreachable, polling interval increases as `baseInterval × 2^n` with dual caps: discovery failures cap at 15s (5s → 10s → 15s) for fast LS detection, RPC failures cap at 60s. Resets immediately on reconnection.
@@ -116,47 +114,35 @@ A plugin built for **Antigravity** (Google's Windsurf-based IDE) that provides r
 2. **Status Bar**: The bottom-right status bar shows current context usage (empty chats use the current/default model threshold).
 3. **Hover**: Hover over the status bar item for detailed info (model, input/output tokens, remaining capacity, compression status, image gen steps, per-model quota summary, and the latest checkpoint shadow model when present).
 
-   ![Hover Details](src/images/悬停详情new.png)
 
 4. **Click — WebView Monitor Panel**: Click the status bar item to open a comprehensive **9-tab monitoring dashboard**:
 
    **Monitor** — Quota overview, GM snapshot, cost snapshot, active session details with output breakdown and LLM call details.
 
-   ![Monitor Tab](src/images/montior1.png)
 
-   ![Monitor Tab - Session Details](src/images/monitor2.png)
 
    **GM Data** — Detailed per-model token usage, call counts, cache hit rates, retry statistics, tool ranking, and a collapsible tool catalog.
 
-   ![GM Data Tab](src/images/gmdata1.png)
 
-   ![GM Data Tab - Details](src/images/gmdata2.png)
 
    **Sessions** — Browse all conversation sessions with context usage, step counts, and model info.
 
-   ![Sessions Tab](src/images/session.png)
 
    **Cost** — Monthly cost breakdown with per-model pricing, cost overview visualization, and a custom pricing editor for called models plus built-in default pricing models.
 
-   ![Cost Tab](src/images/cost.png)
 
    **Models** — All available models with quota status, context limits, and reset countdowns.
 
-   ![Models Tab](src/images/model.png)
 
    **Calendar** — Historical usage data organized by date, with per-cycle cost and token breakdowns.
 
-   ![Calendar Tab](src/images/日历_全部.png)
 
    **Profile** — Account information, plan details, and credit balances.
 
-   ![Profile Tab](src/images/profile.png)
 
    **Settings** — Configure extension behaviors: compression threshold, status bar toggles, polling interval, and more.
 
-   ![Settings Tab](src/images/settings1.png)
 
-   ![Settings Tab - Advanced](src/images/settings2.png)
 
 ## ⚠️ Known Limitations
 
@@ -204,8 +190,11 @@ A plugin built for **Antigravity** (Google's Windsurf-based IDE) that provides r
 | --- | --- |
 | `Show Context Window Details` | Open a QuickPick panel listing all tracked sessions |
 | `Refresh Context Window Monitor` | Re-discover the language server and restart polling |
-| `Switch Display Language` | Choose between Chinese-only, English-only, or bilingual display |
 | `Show Model Activity` | Open the GM Data tab in the monitor panel |
+
+## English-only verification
+
+Run `npm run check:english` to reject CJK characters in tracked paths and text. Before each release, manually inspect new screenshots or image assets; this first English-only release intentionally ships no screenshots.
 
 ## ⭐ Star History
 
@@ -217,4 +206,4 @@ A plugin built for **Antigravity** (Google's Windsurf-based IDE) that provides r
 
 ---
 **Author**: AGI-is-going-to-arrive
-**Version**: 1.16.10
+**Version**: 1.16.15
