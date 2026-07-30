@@ -20,4 +20,10 @@ describe('collapseModelQuotas', () => {
             { label: 'Claude Opus', quotaInfo: { remainingFraction: 0.10, resetTime: '2026-08-03T14:00:00Z' } },
         ])).toBe('Gemini 🟡42% · Claude 🔴10%');
     });
+
+    it('marks 30% remaining red', () => {
+        expect(formatQuotaIndicators([
+            { label: 'Gemini 3.6 Flash', quotaInfo: { remainingFraction: 0.3, resetTime: '2026-07-30T14:00:00Z' } },
+        ])).toBe('Gemini 🔴30%');
+    });
 });

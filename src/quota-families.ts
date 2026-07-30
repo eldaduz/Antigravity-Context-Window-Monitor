@@ -36,7 +36,7 @@ export function collapseModelQuotas(configs: Pick<ModelConfig, 'label' | 'quotaI
 export function formatQuotaIndicators(configs: Pick<ModelConfig, 'label' | 'quotaInfo'>[]): string {
     return collapseModelQuotas(configs).map(({ family, quotaInfo }) => {
         const pct = Math.round(quotaInfo.remainingFraction * 100);
-        const dot = pct >= 80 ? '🟢' : pct > 20 ? '🟡' : '🔴';
+        const dot = pct >= 80 ? '🟢' : pct > 30 ? '🟡' : '🔴';
         return `${family} ${dot}${pct}%`;
     }).join(' · ');
 }

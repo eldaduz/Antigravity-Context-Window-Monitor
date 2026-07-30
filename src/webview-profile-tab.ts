@@ -192,7 +192,7 @@ export function buildModelQuotaGrid(configs: ModelConfig[]): string {
     const cards = quotaModels.map((c) => {
         const qi = c.quotaInfo;
         const pct = Math.round(qi.remainingFraction * 100);
-        const barColor = pct <= 20 ? 'var(--color-danger)' : pct < 80 ? 'var(--color-warn)' : 'var(--color-ok)';
+        const barColor = pct <= 30 ? 'var(--color-danger)' : pct < 80 ? 'var(--color-warn)' : 'var(--color-ok)';
 
         let resetLabel = '';
         if (qi.resetTime) {

@@ -728,7 +728,7 @@ export class StatusBarManager {
         for (const c of rows) {
             const qi = c.quotaInfo!;
             const pct = Math.round(qi.remainingFraction * 100);
-            const bar = pct >= 80 ? '🟢' : pct > 20 ? '🟡' : '🔴';
+            const bar = pct >= 80 ? '🟢' : pct > 30 ? '🟡' : '🔴';
             let resetStr = '—';
             if (qi.resetTime) {
                 const resetDate = new Date(qi.resetTime);
