@@ -5,7 +5,7 @@ import { isShowModelShortId } from './models';
 import { t, tBi, getLanguage } from './i18n';
 import { formatResetAbsolute, formatResetContext, formatResetCountdownFromMs } from './reset-time';
 import { getDaysUntilBillingDay } from './billing-day';
-import { collapseModelQuotas, getResetHorizon } from './quota-families';
+import { collapseModelQuotas, formatQuotaIndicators, getResetHorizon } from './quota-families';
 import {
     applyLineBudget,
     ensureCtaLast,
@@ -899,12 +899,8 @@ export class StatusBarManager {
      * Format a compact quota indicator for the current model.
      * Returns e.g. "🟢85%" or "" if no quota info available.
      */
-    private formatQuotaIndicator(modelId: string): string {
-        const config = this.cachedConfigs.find(c => c.model === modelId);
-        if (!config?.quotaInfo) { return ''; }
-        const pct = Math.round(config.quotaInfo.remainingFraction * 100);
-        const dot = pct >= 80 ? '🟢' : pct > 20 ? '🟡' : '🔴';
-        return `${dot}${pct}%`;
+    private formatQuotaIndicator(_modelId: string): string {
+        return formatQuotaIndicators(this.cachedConfigs);
     }
 
     /**

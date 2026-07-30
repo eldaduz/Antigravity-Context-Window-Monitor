@@ -21,7 +21,7 @@ export function formatResetAbsolute(
     const time = options?.includeSeconds
         ? `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
         : `${pad(date.getHours())}:${pad(date.getMinutes())}`;
-    return `${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${time}`;
+    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)} ${time}`;
 }
 
 export function formatResetCountdownFromMs(diffMs: number): string {
